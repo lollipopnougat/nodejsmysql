@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>layout界面大布局 - Layui</title>
+  <link rel="stylesheet" href="src/css/layui.css">
+  <link rel="icon" href="images/LNP.ico" sizes="64x64">
+</head>
+
+<body class="layui-layout-body">
+  <script src="src/layui.js"></script>
+  <script>
+    layui.use('table', function () {
+      var table = layui.table;
+
+      //第一个实例
+      table.render({
+        elem: '#demo',
+        height: 312,
+        url: '/tpch' //数据接口
+          ,
+        page: true //开启分页
+          ,
+        cols: [
+          [ //表头
+            {
+              field: 'REGIONKEY',
+              title: '洲号',
+              width: 80,
+              sort: true,
+              fixed: 'left'
+            }, {
+              field: 'NAME',
+              title: '洲名',
+              width: 80
+            }, {
+              field: 'COMMEN',
+              title: '注释',
+              width: 100
+            }
+          ]
+        ]
+      });
+
+    });
+  </script>
+  <div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+      <div class="layui-logo">数据库课设界面布局</div>
+      <!-- 头部区域（可配合layui已有的水平导航） -->
+      <ul class="layui-nav layui-layout-left">
+        <li class="layui-nav-item"><a href="">控制台</a></li>
+        <li class="layui-nav-item"><a href="">数据库管理</a></li>
+        <li class="layui-nav-item"><a href="">用户</a></li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">其它系统</a>
+          <dl class="layui-nav-child">
+            <dd><a href="">邮件管理</a></dd>
+            <dd><a href="">消息管理</a></dd>
+            <dd><a href="">授权管理</a></dd>
+          </dl>
+        </li>
+      </ul>
+      <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+          <a href="javascript:;">
+            <img src="https://avatars3.githubusercontent.com/u/33110314?s=460&v=4" class="layui-nav-img">
+            LNP
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="">基本资料</a></dd>
+            <dd><a href="">安全设置</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="">退出</a></li>
+      </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+      <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+          <li class="layui-nav-item layui-nav-itemed">
+            <a class="" href="javascript:;">数据查询</a>
+            <dl class="layui-nav-child">
+              <dd><a href="javascript:;">列表一</a></dd>
+              <dd><a href="javascript:;">列表二</a></dd>
+              <dd><a href="javascript:;">列表三</a></dd>
+              <dd><a href="">超链接</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item">
+            <a href="javascript:;">功能二</a>
+            <dl class="layui-nav-child">
+              <dd><a href="javascript:;">列表一</a></dd>
+              <dd><a href="javascript:;">列表二</a></dd>
+              <dd><a href="">超链接</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a href="">功能三</a></li>
+          <li class="layui-nav-item"><a href="">功能四</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="layui-body">
+      <!-- 内容主体区域 -->
+      <div class="layui-row">
+        <div class="layui-col-md12">
+          <div class="layui-carousel" id="test1">
+            <div carousel-item>
+              <div>
+                <img src="images/LNPSW.png" alt="LNP.Software" hight="100%">
+              </div>
+              <div>条目2</div>
+              <div>条目3</div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md12">
+          <div style="padding: 15px;">
+            <table class="layui-table" lay-data="{height:315, url:'/tpch', page:true, id:'test'}" lay-filter="test">
+              <thead>
+                <tr>
+                  <th lay-data="{field:'REGIONKEY', width:80, sort: true}">洲号</th>
+                  <th lay-data="{field:'NAME', width:80}">洲名</th>
+                  <th lay-data="{field:'COMMEN', width:100, sort: true}">注释</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+
+
+
+        <!-- 条目中可以是任意内容，如：<img src=""> -->
+
+        <script src="src/layui.js"></script>
+        <script>
+          layui.use('carousel', function () {
+            var carousel = layui.carousel;
+            //建造实例
+            carousel.render({
+              elem: '#test1',
+              width: '100%' //设置容器宽度
+                ,
+              arrow: 'always' //始终显示箭头
+              //,anim: 'updown' //切换动画方式
+            });
+          });
+        </script>
+        <div class="layui-footer">
+          <!-- 底部固定区域 -->
+          © LNP.Software - 底部固定区域
+        </div>
+      </div>
+      <script>
+        //JavaScript代码区域
+        layui.use('element', function () {
+          var element = layui.element;
+
+        });
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
