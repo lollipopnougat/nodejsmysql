@@ -9,3 +9,4 @@
 * 后端采用了[express](https://github.com/expressjs/express/),这是一个Node.js实现的后端框架,功能比较全面
 * 与mysql交互使用了[mysql.js](https://github.com/mysqljs/mysql),这是一个纯js实现的能与mysql交互的客户端
 * 各模块版本要求在package.json里
+* 未使用express 的`ejs`功能（主要是不会用）

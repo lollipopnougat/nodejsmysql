@@ -7,10 +7,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>注册页</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="layui/css/layui.css">
-  <link rel="icon" href="static/image/code.png">
-  <script src="layui/layui.js"></script>
+  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/css/layui.css">
+  <link rel="icon" href="images/LNP.ico">
+  <script src="src/layui.js"></script>
 </head>
 
 <body class="layui-bg-black">
@@ -47,7 +47,7 @@
         <button type="submit" lay-submit lay-filter="sub" class="layui-btn">注册</button>
       </div>
       <hr style="width: 100%" />
-      <p style="width: 100%"><a href="login.html" class="fl">已有账号？立即登录</a><a href="javascript:;" class="fr">忘记密码？</a></p>
+      <p style="width: 100%"><a href="/login" class="fl">已有账号？立即登录</a><a href="javascript:;" class="fr">忘记密码？</a></p>
     </form>
   </div>
 
@@ -65,7 +65,7 @@
 
         //alert(user);
         $.ajax({
-          url: 'checkUser.php',
+          url: '/chuser',
           type: 'post',
           dataType: 'text',
           data: {
@@ -76,13 +76,14 @@
             if (data == 1) {
               //$('#ri').removeAttr('hidden');
               //$('#wr').attr('hidden', 'hidden');
-              
+              $('#user').css('border-bottom','3px solid #009688');
 
 
             } else {
               //$('#wr').removeAttr('hidden');
               //$('#ri').attr('hidden', 'hidden');
-              layer.msg('当前用户名已被占用! ')
+              $('#user').css('border-bottom','3px solid #FF5722');
+              layer.msg('当前用户名已被占用! ');
 
             }
 
@@ -94,13 +95,13 @@
       // you code ...
       // 为密码添加正则验证
       $('#pwd').blur(function () {
-        var reg = /^[\w]{6,12}$/;
+        var reg = /^[\w]{4,12}$/;
         if (!($('#pwd').val().match(reg))) {
           //layer.msg('请输入合法密码');
           //$('#pwr').removeAttr('hidden');
           //$('#pri').attr('hidden', 'hidden');
           $('#pwd').css('border-bottom','3px solid #FF5722');
-          layer.msg('密码6-12位');
+          layer.msg('密码4-12位');
         } else {
           //$('#pri').removeAttr('hidden');
           //$('#pwr').attr('hidden', 'hidden');
@@ -126,7 +127,7 @@
       //添加表单监听事件,提交注册信息
       form.on('submit(sub)', function () {
         $.ajax({
-          url: 'reg.php',
+          url: '/regtest',
           type: 'post',
           dataType: 'text',
           data: {
