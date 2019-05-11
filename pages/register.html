@@ -24,7 +24,7 @@
         <!-- 用户名 -->
         <div class="layui-inline" style="width: 100%">
           <input type="text" id="user" name="account" required lay-verify="required" placeholder="请输入用户名"
-            autocomplete="off" class="layui-input"/>
+            autocomplete="off" class="layui-input" />
         </div>
       </div>
       <!-- 密码 -->
@@ -52,7 +52,7 @@
   </div>
 
 
-  
+
   <script type="text/javascript">
     layui.use(['form', 'jquery', 'layer'], function () {
       var form = layui.form;
@@ -62,29 +62,31 @@
       //验证表单
       $('#user').blur(function () {
         var user = $(this).val();
-
         //alert(user);
         $.ajax({
           url: '/chuser',
-          type: 'post',
           dataType: 'text',
+          type: 'post',
           data: {
             user: user
           },
           //验证用户名是否可用
           success: function (data) {
-            if (data == 1) {
+            if (data == '1') {
               //$('#ri').removeAttr('hidden');
               //$('#wr').attr('hidden', 'hidden');
-              $('#user').css('border-bottom','3px solid #009688');
+              $('#user').css('border-bottom', '3px solid #009688');
 
 
-            } else {
+            } else if (data == '-1') {
               //$('#wr').removeAttr('hidden');
               //$('#ri').attr('hidden', 'hidden');
-              $('#user').css('border-bottom','3px solid #FF5722');
-              layer.msg('当前用户名已被占用! ');
+              $('#user').css('border-bottom', '3px solid #FF5722');
+              layer.msg('用户名不能为空! ');
 
+            } else {
+              $('#user').css('border-bottom', '3px solid #FF5722');
+              layer.msg('用户名已存在! ');
             }
 
           }
@@ -100,12 +102,12 @@
           //layer.msg('请输入合法密码');
           //$('#pwr').removeAttr('hidden');
           //$('#pri').attr('hidden', 'hidden');
-          $('#pwd').css('border-bottom','3px solid #FF5722');
+          $('#pwd').css('border-bottom', '3px solid #FF5722');
           layer.msg('密码4-12位');
         } else {
           //$('#pri').removeAttr('hidden');
           //$('#pwr').attr('hidden', 'hidden');
-          $('#pwd').css('border-bottom','3px solid #009688');
+          $('#pwd').css('border-bottom', '3px solid #009688');
         }
       });
 
@@ -114,28 +116,29 @@
         if ($('#pwd').val() != $('#rpwd').val()) {
           //$('#rpwr').removeAttr('hidden');
           //$('#rpri').attr('hidden', 'hidden');
-          $('#rpwd').css('border-bottom','3px solid #FF5722');
+          $('#rpwd').css('border-bottom', '3px solid #FF5722');
           layer.msg('两次输入密码不一致!');
         } else {
           //$('#rpri').removeAttr('hidden');
           //$('#rpwr').attr('hidden', 'hidden');
-          $('#rpwd').css('border-bottom','3px solid #009688');
+          $('#rpwd').css('border-bottom', '3px solid #009688');
         };
       });
 
       //
       //添加表单监听事件,提交注册信息
-      form.on('submit(sub)', function () {
+      form.on('submit(sub)', function (data) {
         $.ajax({
           url: '/regtest',
-          type: 'post',
+          data: data.field,
           dataType: 'text',
+          type: 'post',
           data: {
             user: $('#user').val(),
             pwd: $('#pwd').val(),
           },
           success: function (data) {
-            if (data == 1) {
+            if (data == '1') {
               layer.msg('注册成功');
               ///location.href = "login.html";
             } else {

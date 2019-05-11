@@ -28,7 +28,7 @@ function insertFun(client, uid, username, password, callback) {
             console.log( "error:" + err.message);
             return err;
         }
-          callback(err);
+        callback(err);
     });
 }
 
@@ -36,13 +36,13 @@ function userIsExisted(client, username, callback) {
     if(username === undefined) callback(false);
     else client.query('select uid from test_user where name=?', [username] ,function(err,results,fields) {
         if(err) throw err;
-        if(results[0] === undefined) callback(false);
-        else callback(true);
+        //if(results[0]) callback(true);
+        callback(results);
     });
 }
 
 function getLastUid(client, callback) {
-    client.query('select count(uid) from test_user',function(err,results,fields) {
+    client.query('select count(uid) as count from test_user',function(err,results,fields) {
         if(err) throw err;
         console.log('results[0] ' + results[0]);
         callback(results);

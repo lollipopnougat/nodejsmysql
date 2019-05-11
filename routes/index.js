@@ -26,9 +26,8 @@ router.get('/test', function (req, res, next) {
 router.get('/login', function (req, res, next) {
 
   if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
-     res.redirect('/test');
-  }
-  else res.sendfile(path.join(__dirname, '../pages/login.html'));
+    res.redirect('/test');
+  } else res.sendfile(path.join(__dirname, '../pages/login.html'));
 });
 
 router.get('/register', function (req, res, next) {
@@ -55,10 +54,10 @@ router.post('/logintest', function (req, res) {
     ac: req.body.account,
     pw: req.body.password
   };
-  let results = null;
   console.log(user);
   condb.selectFun(dbclient, user.ac, function (result) {
     //console.log('name: ' + user.ac + ' is existed: ' + result);
+    console.log(result[0] + ' <- 结果');
     if (result[0] === undefined) {
       res.send('0');
     } else {
@@ -76,7 +75,7 @@ router.post('/logintest', function (req, res) {
     res.send('1');
   } else res.send('0');
   */
-  //res.end(JSON.stringify(response));
+  //res.end();
 
 });
 
@@ -85,24 +84,32 @@ router.get('/logout', function (req, res) {
   res.redirect('/login');
 });
 
-router.post('/chuser', function (req, res) { 
-  let isExisted = null;
-  condb.userIsExisted(dbclient, req.body.account, function(isExisted) {});
-  if (isExisted) res.send(0);
-  else res.send(1);
+router.post('/chuser', function (req, res) {
+  if (req.body.user == "") res.send('-1');
+  else {
+    let isExisted = null;
+    condb.userIsExisted(dbclient, req.body.user, function (isExisted) {
+      if (isExisted[0] === undefined) res.send('1');
+      else res.send('0');
+
+    });
+  }
 });
 
-router.post('/regtest', function(req, res) {
-  let lastuid = null;
-  let err = null;
+router.post('/regtest', function (req, res) {
+  let list = {
+    name: req.body.user,
+    password: req.body.pwd
+  };
   //condb.query('select count(uid) from test_user', function())
-  condb.getLastUid(dbclient, function(lastuid) {});
-  console.log('uid: ' + lastuid[0]);
-  condb.insertFun(dbclient, lastuid[0] + 1, req.body.account, req.body.password, function(err) {});
-  if(err) {
-    res.send(0);
-    throw err;
-  }
-  else res.send(1);
+  condb.getLastUid(dbclient, function (lastuid) {
+    condb.insertFun(dbclient, lastuid[0].count + 1, list.name, list.password, function (err) {
+      if (err) {
+        res.send('0');
+        throw err;
+      } else res.send('1');
+    });
+
+  });
 });
 module.exports = router;
