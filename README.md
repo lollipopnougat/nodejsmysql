@@ -1,6 +1,6 @@
 # nodejsmysql
 
-## 这是数据库课设C/S架构的铺路项目
+## 这是数据库课设B/S架构的铺路项目
 
 主要是练习使用express+mysql配合，顺便试一下layui这个前端框架
 
