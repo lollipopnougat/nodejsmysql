@@ -26,6 +26,12 @@
 * 安装了却未使用 `ejs` （主要是不会用）
 * 使用了 `nodemon` 做修改后自动编译的启动器
 
+## 登陆界面和注册界面（github上仅界面，无后台）
+
+请点链接查看
+[登陆](https://lollipopnougat.github.io/login-pages/login)
+[注册](https://lollipopnougat.github.io/login-pages/register)
+
 ### 奇怪的想法
 
 我有种预感，这个课设要我自己完成，所以我得自己好好干！指望别人是不可能的。
