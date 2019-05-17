@@ -91,7 +91,7 @@ router.post('/chuser', function (req, res) {
     condb.userIsExisted(dbclient, req.body.user, function (isExisted) {
       if (isExisted[0] === undefined) res.send('1');
       else res.send('0');
-
+      //
     });
   }
 });
