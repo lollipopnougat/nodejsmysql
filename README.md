@@ -1,40 +1,44 @@
-# nodejsmysql
+# NodejsMysql
 
-## 这是数据库课设B/S架构的铺路项目
+## 这是数据库课设B/S架构的项目
 
-主要是练习使用express+mysql配合，顺便试一下layui这个前端框架
+首先祝贺这个项目成功转正，变成了课设项目本体<br/>
+这次数据库选题是做一个**校园小商品交易系统**<br/>
+~~主要是练习使用`express`+`mysql`配合，顺便试一下`layui`这个前端框架~~<br/>
+希望我们能在课设周之前搞完<br/>
 
 ## 注意
 
-此项目是本人的第一个全栈，您可能会看/遇到：
+在此项目里，您可能会看/遇到：
 
 * 冗长的写法
 * 凌乱的逻辑
 * 改不完的bug
 * 莫名其妙的报错
+* 回调地狱（暂且算是）
 * ······
 
-总之就是凑合着用，如果有好的建议欢迎在 `issues` 面板提出
+如果有好的建议或着你有重构的想法欢迎在 `issues` 面板提出
 
 ## 特点
 
 * 采用npm作为包管理工具
 * 前端框架使用了[Layui](https://www.layui.com/),[Github项目页面](https://github.com/sentsin/layui/)
-* 后端采用了[express](https://github.com/expressjs/express/),这是一个Node.js实现的后端框架,功能比较全面
-* 与 `mysql` 交互使用了[mysql.js](https://github.com/mysqljs/mysql),这是一个纯js实现的能与mysql交互的客户端
+* 后端采用了[express](https://github.com/expressjs/express/),这是一个`Node.js`实现的后端框架,功能比较全面
+* 与 `mysql` 交互使用了[mysql.js](https://github.com/mysqljs/mysql),这是一个纯js实现的能与`mysql`交互的客户端
 * 各模块版本要求在package.json里
 * 安装了却未使用 `ejs` （主要是不会用）
 * 使用了 `nodemon` 做修改后自动编译的启动器
 
 ## 登陆界面和注册界面（github上仅界面，无后台）
 
-请点链接查看
-[登陆](https://lollipopnougat.github.io/login-pages/login)
+请点链接查看<br/>
+[登陆](https://lollipopnougat.github.io/login-pages/login)<br/>
 [注册](https://lollipopnougat.github.io/login-pages/register)
 
-### 奇怪的想法
+## 奇怪的想法
 
-我有种预感，这个课设要我自己完成，所以我得自己好好干！指望别人是不可能的。
+也不知道哪来的自信，有种这个项目做好了可以参加比赛的错觉
 
 ## 写在最后
 
