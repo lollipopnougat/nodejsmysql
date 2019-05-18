@@ -112,4 +112,33 @@ router.post('/regtest', function (req, res) {
 
   });
 });
+
+router.get('/recommend', function (req, res, next) {
+  //查询r表
+  let ssss = {
+    0:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3076848760,3503526724&fm=26&gp=0.jpg',
+    1:'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=295181876,496282636&fm=26&gp=0.jpg',
+    2:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3281070933,157035784&fm=26&gp=0.jpg',
+    3:'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2771201017,181968610&fm=26&gp=0.jpg',
+    4:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2878128986,1256336885&fm=26&gp=0.jpg'
+  };
+  res.json(ssss);
+  /*db.query('select * from r;', [], function (results, fields) {
+    let sresults = {
+      "code": 0,
+      "msg": "",
+      "count": 6,
+      "data": results
+    };
+    console.log(sresults);
+    res.json(sresults);
+    //res.render('index', { title: 'Express11' });
+    
+  });*/
+
+});
+
+router.get('/shop', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/sale.html'));
+});
 module.exports = router;
