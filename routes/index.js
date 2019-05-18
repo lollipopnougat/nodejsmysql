@@ -5,6 +5,7 @@ var router = express.Router();
 var db = require('../db/db'); //引入数据库封装模块
 var session = require('express-session');
 var condb = require('../db/dbConnect');
+var captcha = require('../api/captcha');
 var dbclient = condb.connect();
 //GET 主页
 router.get('/', function (req, res, next) {
@@ -50,7 +51,7 @@ router.get('/tpch', function (req, res, next) {
 });
 
 router.post('/logintest', function (req, res) {
-  user = {
+  let user = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
     ac: req.body.account,
     pw: req.body.password
   };
@@ -58,17 +59,15 @@ router.post('/logintest', function (req, res) {
   condb.selectFun(dbclient, user.ac, function (result) {
     //console.log('name: ' + user.ac + ' is existed: ' + result);
     console.log(result[0] + ' <- 结果');
-    if (result[0] === undefined) {
+    if (result[0] === undefined) { //判断是不是undefined必须用 === ,===除了比较值，还会比较变量类型
       res.send('0');
-    } else {
-      if (result[0].passwd === user.pw) {
+    } else if (result[0].passwd === user.pw) {
         req.session.userName = user.ac;
         res.send('1');
       } else {
         res.send('0');
       }
-    }
-  });
+    });
   /*
   if (response.ac == 'test' && response.pw == '123456') {
     req.session.userName = req.body.account; // 登录成功，设置 session
@@ -79,7 +78,7 @@ router.post('/logintest', function (req, res) {
 
 });
 
-router.get('/logout', function (req, res) {
+router.get('/logout', function (req, res, next) {
   req.session.userName = null; // 删除session
   res.redirect('/login');
 });
@@ -140,5 +139,9 @@ router.get('/recommend', function (req, res, next) {
 
 router.get('/shop', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/sale.html'));
+});
+
+router.get('/captcha', function (req, res, next) {
+  captcha.getCaptcha(req, res, next);
 });
 module.exports = router;

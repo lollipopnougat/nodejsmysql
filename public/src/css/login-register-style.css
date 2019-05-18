@@ -591,3 +591,16 @@ html body .layui-nav .layui-nav-bar {
         display: none;
     }
 }
+
+.layui-input-captcha {
+    text-align: right;
+}
+.layui-input-captcha input{
+    vertical-align: middle;
+    width: 100%;
+}
+img.captcha {
+    vertical-align: middle;
+    position: relative;
+    top: -35px;
+}
