@@ -15,19 +15,20 @@ app.set('view engine', 'ejs');
 
 app.use(bodyparser.json()); // 使用bodyparder中间件，
 app.use(bodyparser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(session({
   secret :  'secret', // 对session id 相关的cookie 进行签名
   resave : true,
   saveUninitialized: false, // 是否保存未初始化的会话
   cookie : {
-      maxAge : 1000 * 60 * 1, // 设置 session 的有效时间，单位毫秒
+      maxAge : 1000 * 60 * 2, // 设置 session 的有效时间，单位毫秒
   },
 }));
 
 app.use(logger('common'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

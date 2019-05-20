@@ -10,8 +10,10 @@ var dbclient = condb.connect();
 //GET 主页
 router.get('/', function (req, res, next) {
   res.render('index', {
-    title: 'Express'
+    title: 'Express',
+    index: '主页'
   });
+
   // console.log('request ip: ' + getIp(req));
 });
 
@@ -27,7 +29,8 @@ router.get('/test', function (req, res, next) {
 router.get('/login', function (req, res, next) {
 
   if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
-    res.redirect('/test');
+    //res.redirect('/test');
+    res.redirect('back');
   } else res.sendfile(path.join(__dirname, '../pages/login.html'));
 });
 
@@ -78,9 +81,10 @@ router.post('/logintest', function (req, res) {
 
 });
 
-router.get('/logout', function (req, res, next) {
+//退出
+router.get('/logout', function (req, res, next) { 
   req.session.userName = null; // 删除session
-  res.redirect('/login');
+  res.redirect('/home');
 });
 
 router.post('/chuser', function (req, res) {
@@ -137,8 +141,28 @@ router.get('/recommend', function (req, res, next) {
 
 });
 
-router.get('/shop', function (req, res, next) {
-  res.sendfile(path.join(__dirname, '../pages/sale.html'));
+router.get('/home', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/home.html'));
+});
+
+router.get('/preview', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/preview.html'));
+});
+
+router.get('/about', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/about.html'));
+});
+
+router.get('/delivery', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/delivery.html'));
+});
+
+router.get('/news', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/news.html'));
+});
+
+router.get('/contact', function (req, res, next) {
+  res.sendfile(path.join(__dirname, '../pages/contact.html'));
 });
 
 router.get('/captcha', function (req, res, next) {

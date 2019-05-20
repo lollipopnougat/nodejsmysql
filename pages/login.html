@@ -26,9 +26,8 @@
             <div class="layui-input-captcha">
                 <input type="text" name="captcha" required lay-verify="required" placeholder="验证码" autocomplete="off"
                     class="captcha layui-input" id="captcha">
-                <a href="#" rel="external nofollow" @click="editCaptcha">
-                    <img src="/captcha" alt="captcha" class="captcha">
-                </a>
+                <img src="/captcha" alt="captcha" class="captcha">
+
 
             </div>
             <div class="layui-input-inline login-btn">
@@ -48,19 +47,22 @@
 
     <script src="src/layui.js"></script>
     <script type="text/javascript">
-        function editCaptcha() {
-            this.$refs.imgYzm.src = '/captcha?d=' + Math.random()
-        }
         layui.use(['form', 'layer', 'jquery'], function () {
-
-            // 操作对象
             var form = layui.form;
             var $ = layui.jquery;
+            // 操作对象
+            /* $('#captcha').click(function () {
+                this.attr('src', '/captcha?d=' + Math.random());
+            });
+*/
+
+
             form.on('submit(login)', function (data) {
                 // console.log(data.field);
                 let captcha = document.cookie.split('=')[1]
                 if ($('#captcha').val().toLowerCase() != captcha) {
                     layer.msg('验证码错误');
+                    $('#captcha').css('border-bottom', '3px solid #FF5722');
                 } else {
                     $.ajax({
                         url: '/logintest',
@@ -69,7 +71,7 @@
                         type: 'post',
                         success: function (data) {
                             if (data == '1') {
-                                location.href = "/test";
+                                location.href = "/home";
                             } else {
                                 layer.msg('登录名或密码错误');
                             }
