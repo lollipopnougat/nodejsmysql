@@ -27,7 +27,7 @@
 * 后端采用了[express](https://github.com/expressjs/express/),这是一个`Node.js`实现的后端框架,功能比较全面
 * 与 `mysql` 交互使用了[mysql.js](https://github.com/mysqljs/mysql),这是一个纯js实现的能与`mysql`交互的客户端
 * 各模块版本要求在package.json里
-* 安装了却未使用 `ejs` （主要是不会用）
+* 使用 `ejs` 生成商品页面
 * 使用了 `nodemon` 做修改后自动编译的启动器
 * 从网上找来的前端页面（emmmm）
 
