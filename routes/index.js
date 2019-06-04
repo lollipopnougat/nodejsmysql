@@ -165,6 +165,13 @@ router.get('/contact', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/contact.html'));
 });
 
+router.get('/previewejs', function (req, res, next) {
+  res.render('preview', {
+    title: '商品',
+    'img5': 'images/thumbnailslide-5.jpg'
+  });
+});
+
 router.get('/captcha', function (req, res, next) {
   captcha.getCaptcha(req, res, next);
 });

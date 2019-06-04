@@ -1,6 +1,7 @@
 var svgCaptcha = require('svg-captcha');
 var session = require('express-session');
 
+//验证码模块
 function getCaptcha(req, res, next) {
   var captcha = svgCaptcha.create({
     // 翻转颜色 

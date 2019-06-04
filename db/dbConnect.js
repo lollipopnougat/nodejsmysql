@@ -15,7 +15,7 @@ function connectServer() {
 
 function selectFun(client, username, callback) {
     //client为一个mysql连接对象
-    client.query('select passwd from test_user where name="' + username + '"',function(err,results,fields) {
+    client.query('select passwd from test_user where name=?', username, function(err,results,fields) {
         if(err) throw err;
 
         callback(results);
@@ -34,7 +34,7 @@ function insertFun(client, uid, username, password, callback) {
 
 function userIsExisted(client, username, callback) {
     if(username === undefined) callback(false);
-    else client.query('select uid from test_user where name=?', [username] ,function(err,results,fields) {
+    else client.query('select uid from test_user where name=?', username ,function(err,results,fields) {
         if(err) throw err;
         //if(results[0]) callback(true);
         callback(results);
