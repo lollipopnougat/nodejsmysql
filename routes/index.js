@@ -6,6 +6,8 @@ var db = require('../db/db'); //引入数据库封装模块
 var session = require('express-session');
 var condb = require('../db/dbConnect');
 var captcha = require('../api/captcha');
+var dbcomm = require('../db/dbcomm');
+var commclient = dbcomm.connect();
 var dbclient = condb.connect();
 //GET 主页
 router.get('/', function (req, res, next) {
@@ -166,26 +168,31 @@ router.get('/contact', function (req, res, next) {
 });
 
 router.get('/previewejs', function (req, res, next) {
-  res.render('preview', {
-    title: '商品',
-    curcategory: '电器',
-    productslide1: 'images/productslide-1.jpg',
-    productslide2: 'images/productslide-2.jpg',
-    productslide3: 'images/productslide-3.jpg',
-    productslide4: 'images/productslide-4.jpg',
-    productslide5: 'images/productslide-5.jpg',
-    productslide6: 'images/productslide-6.jpg',
-    thumbnailslide1: 'images/thumbnailslide-1.jpg',
-    thumbnailslide2: 'images/thumbnailslide-2.jpg',
-    thumbnailslide3: 'images/thumbnailslide-3.jpg',
-    thumbnailslide4: 'images/thumbnailslide-4.jpg',
-    thumbnailslide5: 'images/thumbnailslide-5.jpg',
-    thumbnailslide6: 'images/thumbnailslide-6.jpg',
-    cname: '微波炉',
-    csdesc: '这就是微波炉',
-    cprice: '300',
-    cdesc: '这就是微波炉啊有什么好介绍的！'
+  let result = null;
+  dbcomm.getPicUrl(commclient,1,function (result) {
+    res.render('preview', {
+      title: '商品',
+      curcategory: '电器',
+      productslide1: result[0]['purl'],
+      productslide2: result[1]['purl'],
+      productslide3: result[2]['purl'],
+      productslide4: result[3]['purl'],
+      productslide5: result[4]['purl'],
+      productslide6: result[5]['purl'],
+      thumbnailslide1: result[6]['purl'],
+      thumbnailslide2: result[7]['purl'],
+      thumbnailslide3: result[8]['purl'],
+      thumbnailslide4: result[9]['purl'],
+      thumbnailslide5: result[10]['purl'],
+      thumbnailslide6: result[11]['purl'],
+      cname: '微波炉',
+      csdesc: '这就是微波炉',
+      cprice: '300',
+      cdesc: '这就是微波炉啊有什么好介绍的！'
+    });
+    console.log(result);
   });
+  
 });
 
 router.get('/captcha', function (req, res, next) {
