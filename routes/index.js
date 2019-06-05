@@ -168,7 +168,23 @@ router.get('/contact', function (req, res, next) {
 router.get('/previewejs', function (req, res, next) {
   res.render('preview', {
     title: '商品',
-    'img5': 'images/thumbnailslide-5.jpg'
+    curcategory: '电器',
+    productslide1: 'images/productslide-1.jpg',
+    productslide2: 'images/productslide-2.jpg',
+    productslide3: 'images/productslide-3.jpg',
+    productslide4: 'images/productslide-4.jpg',
+    productslide5: 'images/productslide-5.jpg',
+    productslide6: 'images/productslide-6.jpg',
+    thumbnailslide1: 'images/thumbnailslide-1.jpg',
+    thumbnailslide2: 'images/thumbnailslide-2.jpg',
+    thumbnailslide3: 'images/thumbnailslide-3.jpg',
+    thumbnailslide4: 'images/thumbnailslide-4.jpg',
+    thumbnailslide5: 'images/thumbnailslide-5.jpg',
+    thumbnailslide6: 'images/thumbnailslide-6.jpg',
+    cname: '微波炉',
+    csdesc: '这就是微波炉',
+    cprice: '300',
+    cdesc: '这就是微波炉啊有什么好介绍的！'
   });
 });
 
