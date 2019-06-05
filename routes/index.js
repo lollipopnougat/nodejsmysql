@@ -32,6 +32,7 @@ router.get('/login', function (req, res, next) {
 
   if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
+    console.log("用户 " + req.session.userName + " 已登录");
     res.redirect('back');
   } else res.sendfile(path.join(__dirname, '../pages/login.html'));
 });
@@ -68,6 +69,7 @@ router.post('/logintest', function (req, res) {
       res.send('0');
     } else if (result[0].passwd === user.pw) {
         req.session.userName = user.ac;
+        req.app.locals['username'] = user.ac;
         res.send('1');
       } else {
         res.send('0');
@@ -85,8 +87,15 @@ router.post('/logintest', function (req, res) {
 
 //退出
 router.get('/logout', function (req, res, next) { 
-  req.session.userName = null; // 删除session
-  res.redirect('/home');
+  //req.session.userName = null; // 删除session
+  req.session.destroy(function (err) {
+    if(err){
+        console.log(err);
+    }else{
+        res.redirect('/home');
+    }
+  });
+  //res.redirect('/home');
 });
 
 router.post('/chuser', function (req, res) {
@@ -193,6 +202,17 @@ router.get('/previewejs', function (req, res, next) {
     console.log(result);
   });
   
+});
+
+router.get('/homejs',function (req,res,next) {
+  if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+    //res.redirect('/test');
+    console.log("用户 " + req.session.userName + " 已登录");
+    res.render('home',{
+      username: req.session.userName
+    });  
+  } 
+  else res.redirect('/login');
 });
 
 router.get('/captcha', function (req, res, next) {

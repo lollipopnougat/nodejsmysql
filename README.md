@@ -37,11 +37,9 @@
 [登陆](https://lollipopnougat.github.io/login-pages/login)<br/>
 [注册](https://lollipopnougat.github.io/login-pages/register)
 
-## 奇怪的想法
+## 重构
 
-也不知道哪来的自信，有种这个项目做好了可以参加比赛的错觉<br/>
-
-###### 是错觉没跑了
+看了一下db文件夹，觉得有必要重构一下数据库连接了，顺便得把之前测试的乱七八糟全撤掉，又是大修……
 
 ## 写在最后
 
