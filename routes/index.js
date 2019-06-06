@@ -204,7 +204,7 @@ router.get('/previewejs', function (req, res, next) {
   
 });
 
-router.get('/homejs',function (req,res,next) {
+router.get('/homejs',function (req, res, next) {
   if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
     console.log("用户 " + req.session.userName + " 已登录");
@@ -213,6 +213,32 @@ router.get('/homejs',function (req,res,next) {
     });  
   } 
   else res.redirect('/login');
+});
+
+router.get('/welcome',function (req, res, next){
+  if(req.session.userName) {
+    var sssss = null;
+    console.log("用户 " + req.session.userName + " 已登录");
+    db.query('select count(uid) from user_list',[],function (result,fields) {
+      console.log(result);
+    });
+    res.render('welcome',{
+      username: req.session.userName,
+      articlenum: 0,
+      usernum: 1,
+      commentnum: 0,
+      commoditnum: 1,
+      version: '1.0.23',
+      serveroot: '127.0.0.1',
+      systeminfo: 'Windows NT 10.0',
+      envinfo: 'Windows 10 x64',
+      nodever: 'v0.15.3',
+      expressver: '4.16.1',
+      mysqlver: '8.0.15',
+      npmver: '6.9.0'
+    });
+  }
+  else  res.redirect('/login');
 });
 
 router.get('/captcha', function (req, res, next) {
