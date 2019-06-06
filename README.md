@@ -27,15 +27,17 @@
 * 后端采用了[express](https://github.com/expressjs/express/),这是一个`Node.js`实现的后端框架,功能比较全面
 * 与 `mysql` 交互使用了[mysql.js](https://github.com/mysqljs/mysql),这是一个纯js实现的能与`mysql`交互的客户端
 * 各模块版本要求在package.json里
-* 使用 `ejs` 生成商品页面
-* 使用了 `nodemon` 做修改后自动编译的启动器
-* 从网上找来的前端页面（emmmm）
+* 使用 [ejs](https://github.com/mde/ejs) 生成商品页面
+* 使用了 [nodemon](https://github.com/remy/nodemon) 做修改后自动编译的启动器
+* 从网上找来的前端页面
+* 使用了[x-admin](http://x.xuebingsi.com/)的后端管理模板(实际上基于layui，我们也对其进行了`ejs`魔改)
 
-## 登陆界面和注册界面（github上仅界面，无后台）
+## ~~登陆界面和注册界面（github上仅界面，无后台）~~
 
-请点链接查看<br/>
-[登陆](https://lollipopnougat.github.io/login-pages/login)<br/>
-[注册](https://lollipopnougat.github.io/login-pages/register)
+~~请点链接查看~~<br/>
+~~[登陆](https://lollipopnougat.github.io/login-pages/login)~~<br/>
+~~[注册](https://lollipopnougat.github.io/login-pages/register)~~<br/>
+此部分最终会被重构
 
 ## 重构
 

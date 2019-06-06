@@ -3,9 +3,17 @@ var dbConfig = require('./db.config');
 
 
 module.exports = {
-  query: function (sql, params, callback) {
+  query: function (sql, params, ident, callback) {
+    let dbcon = null;
     //每次使用的时候需要创建链接，数据操作完成之后要关闭连接
-    var connection = mysql.createConnection(dbConfig);
+    switch(ident) 
+    {
+      case 0: dbcon = dbConfig.bs; break;
+      case 1: dbcon = dbConfig.ad; break;
+      case 2: dbcon = dbConfig.se; break;
+      case 3: dbcon = dbConfig.nu; break;
+    }
+    var connection = mysql.createConnection(dbcon);
     connection.connect(function (err) {
       if (err) {
         console.log('数据库链接失败');

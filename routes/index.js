@@ -40,7 +40,7 @@ router.get('/login', function (req, res, next) {
 router.get('/register', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/register.html'));
 });
-
+/*
 router.get('/tpch', function (req, res, next) {
   //查询r表
   db.query('select * from r;', [], function (results, fields) {
@@ -55,7 +55,7 @@ router.get('/tpch', function (req, res, next) {
     //res.render('index', { title: 'Express11' });
   });
 });
-
+*/
 router.post('/logintest', function (req, res) {
   let user = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
     ac: req.body.account,
@@ -68,13 +68,13 @@ router.post('/logintest', function (req, res) {
     if (result[0] === undefined) { //判断是不是undefined必须用 === ,===除了比较值，还会比较变量类型
       res.send('0');
     } else if (result[0].passwd === user.pw) {
-        req.session.userName = user.ac;
-        req.app.locals['username'] = user.ac;
-        res.send('1');
-      } else {
-        res.send('0');
-      }
-    });
+      req.session.userName = user.ac;
+      req.app.locals['username'] = user.ac;
+      res.send('1');
+    } else {
+      res.send('0');
+    }
+  });
   /*
   if (response.ac == 'test' && response.pw == '123456') {
     req.session.userName = req.body.account; // 登录成功，设置 session
@@ -86,13 +86,13 @@ router.post('/logintest', function (req, res) {
 });
 
 //退出
-router.get('/logout', function (req, res, next) { 
+router.get('/logout', function (req, res, next) {
   //req.session.userName = null; // 删除session
   req.session.destroy(function (err) {
-    if(err){
-        console.log(err);
-    }else{
-        res.redirect('/home');
+    if (err) {
+      console.log(err);
+    } else {
+      res.redirect('/home');
     }
   });
   //res.redirect('/home');
@@ -127,6 +127,7 @@ router.post('/regtest', function (req, res) {
   });
 });
 
+/*
 router.get('/recommend', function (req, res, next) {
   //查询r表
   let ssss = {
@@ -148,9 +149,10 @@ router.get('/recommend', function (req, res, next) {
     res.json(sresults);
     //res.render('index', { title: 'Express11' });
     
-  });*/
+  });
 
 });
+*/
 
 router.get('/home', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/home.html'));
@@ -178,7 +180,7 @@ router.get('/contact', function (req, res, next) {
 
 router.get('/previewejs', function (req, res, next) {
   let result = null;
-  dbcomm.getPicUrl(commclient,1,function (result) {
+  dbcomm.getPicUrl(commclient, 1, function (result) {
     res.render('preview', {
       title: '商品',
       curcategory: '电器',
@@ -201,28 +203,27 @@ router.get('/previewejs', function (req, res, next) {
     });
     console.log(result);
   });
-  
+
 });
 
-router.get('/homejs',function (req, res, next) {
+router.get('/homejs', function (req, res, next) {
   if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
     console.log("用户 " + req.session.userName + " 已登录");
-    res.render('home',{
+    res.render('home', {
       username: req.session.userName
-    });  
-  } 
-  else res.redirect('/login');
+    });
+  } else res.redirect('/login');
 });
 
-router.get('/welcome',function (req, res, next){
-  if(req.session.userName) {
+router.get('/welcome', function (req, res, next) {
+  if (req.session.userName) {
     var sssss = null;
     console.log("用户 " + req.session.userName + " 已登录");
-    db.query('select count(uid) from user_list',[],function (result,fields) {
+    db.query('select count(uid) from user_list', [], 0, function (result, fields) {
       console.log(result);
     });
-    res.render('welcome',{
+    res.render('welcome', {
       username: req.session.userName,
       articlenum: 0,
       usernum: 1,
@@ -237,8 +238,7 @@ router.get('/welcome',function (req, res, next){
       mysqlver: '8.0.15',
       npmver: '6.9.0'
     });
-  }
-  else  res.redirect('/login');
+  } else res.redirect('/login');
 });
 
 router.get('/captcha', function (req, res, next) {
