@@ -6,9 +6,8 @@ var db = require('../db/db'); //引入数据库封装模块
 var session = require('express-session');
 var condb = require('../db/dbConnect');
 var captcha = require('../api/captcha');
-var dbcomm = require('../db/dbcomm');
-var commclient = dbcomm.connect();
 var dbclient = condb.connect();
+var sha1 = require('js-sha1');
 //GET 主页
 router.get('/', function (req, res, next) {
   res.render('index', {
@@ -40,7 +39,7 @@ router.get('/login', function (req, res, next) {
 router.get('/register', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/register.html'));
 });
-/*
+
 router.get('/tpch', function (req, res, next) {
   //查询r表
   db.query('select * from r;', [], function (results, fields) {
@@ -55,13 +54,25 @@ router.get('/tpch', function (req, res, next) {
     //res.render('index', { title: 'Express11' });
   });
 });
-*/
+
+router.post('/memchapas', function (req, res) {
+  let tmp = {
+    un: req.body.username,
+    op: req.body.oldpass,
+    np: req.body.newpass,
+    rp: req.body.repass
+  };
+  console.log(tmp);
+  res.send('1');
+});
+
 router.post('/logintest', function (req, res) {
   let user = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
     ac: req.body.account,
     pw: req.body.password
   };
   console.log(user);
+
   condb.selectFun(dbclient, user.ac, function (result) {
     //console.log('name: ' + user.ac + ' is existed: ' + result);
     console.log(result[0] + ' <- 结果');
@@ -158,10 +169,10 @@ router.get('/home', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/home.html'));
 });
 
-router.get('/preview', function (req, res, next) {
+/*router.get('/preview', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/preview.html'));
 });
-
+*/
 router.get('/about', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/about.html'));
 });
@@ -178,31 +189,38 @@ router.get('/contact', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/contact.html'));
 });
 
-router.get('/previewejs', function (req, res, next) {
-  let result = null;
-  dbcomm.getPicUrl(commclient, 1, function (result) {
-    res.render('preview', {
-      title: '商品',
-      curcategory: '电器',
-      productslide1: result[0]['purl'],
-      productslide2: result[1]['purl'],
-      productslide3: result[2]['purl'],
-      productslide4: result[3]['purl'],
-      productslide5: result[4]['purl'],
-      productslide6: result[5]['purl'],
-      thumbnailslide1: result[6]['purl'],
-      thumbnailslide2: result[7]['purl'],
-      thumbnailslide3: result[8]['purl'],
-      thumbnailslide4: result[9]['purl'],
-      thumbnailslide5: result[10]['purl'],
-      thumbnailslide6: result[11]['purl'],
-      cname: '微波炉',
-      csdesc: '这就是微波炉',
-      cprice: '300',
-      cdesc: '这就是微波炉啊有什么好介绍的！'
-    });
-    console.log(result);
+router.get('/preview', function (req, res, next) {
+  db.query('select * from comm_list where cid=?', req.query.cid, 0, function (judgecomm, fields) {
+    if (judgecomm.length == 0) res.sendFile(path.join(__dirname, '../pages/error.html'));
+    else {
+      db.query('select purl from pic_list where pcid=? order by pname', req.query.cid, 0, function (picurls, fields) {
+        db.query('select cname,cdesc,cprice,cnum,ctype from comm_list where cid=?', req.query.cid, 0, function (results, fields) {
+          res.render('preview', {
+            title: results[0].cname + '商品页',
+            curcategory: results[0].ctype,
+            productslide1: picurls[0].purl,
+            productslide2: picurls[1].purl,
+            productslide3: picurls[2].purl,
+            productslide4: picurls[3].purl,
+            productslide5: picurls[4].purl,
+            productslide6: picurls[5].purl,
+            thumbnailslide1: picurls[6].purl,
+            thumbnailslide2: picurls[7].purl,
+            thumbnailslide3: picurls[8].purl,
+            thumbnailslide4: picurls[9].purl,
+            thumbnailslide5: picurls[10].purl,
+            thumbnailslide6: picurls[11].purl,
+            cname: results[0].cname,
+            csdesc: results[0].cdesc,
+            cprice: results[0].cprice,
+            cdesc: '！'
+          });
+        });
+      });
+    }
+
   });
+
 
 });
 
@@ -217,31 +235,82 @@ router.get('/homejs', function (req, res, next) {
 });
 
 router.get('/welcome', function (req, res, next) {
-  if (req.session.userName) {
-    var sssss = null;
-    console.log("用户 " + req.session.userName + " 已登录");
-    db.query('select count(uid) from user_list', [], 0, function (result, fields) {
-      console.log(result);
-    });
-    res.render('welcome', {
-      username: req.session.userName,
-      articlenum: 0,
-      usernum: 1,
-      commentnum: 0,
-      commoditnum: 1,
-      version: '1.0.23',
-      serveroot: '127.0.0.1',
-      systeminfo: 'Windows NT 10.0',
-      envinfo: 'Windows 10 x64',
-      nodever: 'v0.15.3',
-      expressver: '4.16.1',
-      mysqlver: '8.0.15',
-      npmver: '6.9.0'
-    });
-  } else res.redirect('/login');
+  //if (req.session.userName) {
+  //console.log("用户 " + req.session.userName + " 已登录");
+  //db.query('select count(uid) from user_list', [], 0, function (result, fields) {
+  //console.log(result);
+  //});
+  res.render('welcome', {
+    username: 'lnp', //req.session.userName,
+    articlenum: 0,
+    usernum: 1,
+    commentnum: 0,
+    commoditnum: 1,
+    version: '1.0.23',
+    serveroot: '127.0.0.1',
+    systeminfo: 'Windows NT 10.0',
+    envinfo: 'Windows 10 x64',
+    nodever: 'v0.15.3',
+    expressver: '4.16.1',
+    mysqlver: '8.0.15',
+    npmver: '6.9.0'
+  });
+  //} else res.redirect('/login');
 });
 
 router.get('/captcha', function (req, res, next) {
   captcha.getCaptcha(req, res, next);
+});
+
+router.get('/bsindex', function (req, res, next) {
+  //if (req.session.userName) {
+  console.log("用户 " + req.session.userName + " 已登录");
+  res.sendFile(path.join(__dirname, '../pages/bsindex.html'));
+  //}
+  //else res.redirect('/login');
+});
+
+router.get('/memlist', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/memlist.html'));
+});
+
+router.get('/memlst', function (req, res, next) {
+  db.query('select * from user_list', [], 1, function (results, fields) {
+    let sresults = {
+      "code": 0,
+      "msg": "",
+      "count": results.length,
+      "data": results
+    };
+    res.json(sresults);
+  });
+});
+
+router.post('/changemem', function (req, res) {
+  let pd = {
+    uid: req.body.puid,
+    field: req.body.pfield,
+    value: req.body.pvalue
+  };
+  db.query('update user_list set ' + pd.field + '=? where uid=?', [pd.value, pd.uid], 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
+router.post('/memaddp', function (req, res) {
+  let adp = {
+    uid: req.body.uid,
+    op: req.body.oldpass,
+    np: req.body.newpass,
+  };
+  db.query('select upasswd from user_list where uid=?', adp.uid, function (results) {
+    if (results.upasswd == adp.op) {
+      db.query('update user_list set upasswd=? where uid=?', [adp.np, adp.uid], 1, function (err, results, fields) {
+        if (err) res.send('0');
+        else res.send('1');
+      });
+    }
+  });
 });
 module.exports = router;
