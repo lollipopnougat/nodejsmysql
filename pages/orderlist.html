@@ -157,11 +157,11 @@
                     data = obj.data //得到所在行所有键值
                     ,
                     field = obj.field; //得到字段
-                layer.msg('[ID: ' + data.uid + '] ' + field + ' 字段更改为：' + value);
+                layer.msg('[ID: ' + data.oid + '] ' + field + ' 字段更改为：' + value);
                 $.ajax({
                     url: '/changeord',
                     data: {
-                        puid: data.uid,
+                        poid: data.oid,
                         pfield: field,
                         pvalue: value
                     },

@@ -122,7 +122,7 @@
                     $.ajax({
                         url: '/delmem',
                         data: {
-                            uid: element
+                            uid: element.parents().parents().next().children()[0].innerText
                         },
                         dataType: 'text',
                         type: 'post',

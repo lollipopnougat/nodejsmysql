@@ -86,14 +86,15 @@
         <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
         <button class="layui-btn layui-btn-sm" lay-event="isAll"> 验证是否全选</button>
         <button class="layui-btn layui-btn-danger" onclick="del()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="xadmin.open('添加商品','/commadd',600,400)"><i class="layui-icon"></i>添加</button>
+        <button class="layui-btn" onclick="xadmin.open('添加商品','/commadd',600,400)"><i
+                class="layui-icon"></i>添加</button>
     </div>
 </script>
 
 <script>
-    layui.use(['laydate', 'form'], function () {
+    layui.use(['laydate', 'form', 'table'], function () {
         var laydate = layui.laydate;
-
+        var table = layui.table;
         //执行一个laydate实例
         laydate.render({
             elem: '#start' //指定元素
@@ -103,24 +104,25 @@
         laydate.render({
             elem: '#end' //指定元素
         });
-        
+
         del = function delAll() {
             var ids = [];
 
             // 获取选中的id 
             $('tbody input').each(function (index, el) {
                 if ($(this).prop('checked')) {
-                    ids.push($(this).val())
+                    ids.push($(this));
+                    console.log($(this));
                 }
             });
-
-            layer.confirm('确认要删除选中的项吗？', function () {
+            
+            layer.confirm('确认要删除所有选中项吗？', function () {
                 //捉到所有被选中的，发异步进行删除
                 ids.forEach(element => {
                     $.ajax({
                         url: '/delcomm',
                         data: {
-                            cid: element
+                            cid: element.parents().parents().next().children()[0].innerText
                         },
                         dataType: 'text',
                         type: 'post',
@@ -138,6 +140,7 @@
                     });
                 });
             });
+            
         }
     });
 </script>

@@ -267,6 +267,10 @@ router.get('/bsindex', function (req, res, next) {
   //else res.redirect('/login');
 });
 
+router.get('/orderlist', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+});
+
 router.get('/memlist', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/memlist.html'));
 });
@@ -281,6 +285,22 @@ router.get('/memlst', function (req, res, next) {
   pag *= 10;
   //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
   db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
+    let sresults = {
+      "code": 0,
+      "msg": "",
+      "count": results.length,
+      "data": results
+    };
+    res.json(sresults);
+  });
+});
+
+router.get('/commlst', function (req, res, next) {
+  let pag = req.query.page;
+  pag -= 1;
+  pag *= 10;
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+  db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
     let sresults = {
       "code": 0,
       "msg": "",
