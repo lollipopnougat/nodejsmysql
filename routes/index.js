@@ -218,10 +218,7 @@ router.get('/preview', function (req, res, next) {
         });
       });
     }
-
   });
-
-
 });
 
 router.get('/homejs', function (req, res, next) {
@@ -250,7 +247,7 @@ router.get('/welcome', function (req, res, next) {
     serveroot: '127.0.0.1',
     systeminfo: 'Windows NT 10.0',
     envinfo: 'Windows 10 x64',
-    nodever: 'v0.15.3',
+    nodever: 'v10.16.0',
     expressver: '4.16.1',
     mysqlver: '8.0.15',
     npmver: '6.9.0'
@@ -264,7 +261,7 @@ router.get('/captcha', function (req, res, next) {
 
 router.get('/bsindex', function (req, res, next) {
   //if (req.session.userName) {
-  console.log("用户 " + req.session.userName + " 已登录");
+  //console.log("用户 " + req.session.userName + " 已登录");
   res.sendFile(path.join(__dirname, '../pages/bsindex.html'));
   //}
   //else res.redirect('/login');
@@ -274,8 +271,32 @@ router.get('/memlist', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/memlist.html'));
 });
 
+router.get('/commlist', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/commlist.html'));
+});
+
 router.get('/memlst', function (req, res, next) {
-  db.query('select * from user_list', [], 1, function (results, fields) {
+  let pag = req.query.page;
+  pag -= 1;
+  pag *= 10;
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+  db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
+    let sresults = {
+      "code": 0,
+      "msg": "",
+      "count": results.length,
+      "data": results
+    };
+    res.json(sresults);
+  });
+});
+
+router.get('/commlst', function (req, res, next) {
+  let pag = req.query.page;
+  pag -= 1;
+  pag *= 10;
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+  db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
     let sresults = {
       "code": 0,
       "msg": "",
@@ -293,6 +314,32 @@ router.post('/changemem', function (req, res) {
     value: req.body.pvalue
   };
   db.query('update user_list set ' + pd.field + '=? where uid=?', [pd.value, pd.uid], 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
+router.post('/changecomm', function (req, res) {
+  let pd = {
+    cid: req.body.pcid,
+    field: req.body.pfield,
+    value: req.body.pvalue
+  };
+  db.query('update comm_list set ' + pd.field + '=? where cid=?', [pd.value, pd.cid], 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
+router.post('/delmem', function (req, res) {
+  db.query('delete from user_list where uid=?', req.body.uid, 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
+router.post('/delcomm', function (req, res) {
+  db.query('delete from comm_list where cid=?', req.body.cid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
   });
