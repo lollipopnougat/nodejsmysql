@@ -279,6 +279,10 @@ router.get('/commlist', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/commlist.html'));
 });
 
+router.get('/memadd', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/memadd.html'));
+});
+
 router.get('/memlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
@@ -365,13 +369,13 @@ router.post('/delcomm', function (req, res) {
   });
 });
 
-router.post('/memaddp', function (req, res) {
+router.post('/memchangepass', function (req, res) {
   let adp = {
     uid: req.body.uid,
     op: req.body.oldpass,
     np: req.body.newpass,
   };
-  db.query('select upasswd from user_list where uid=?', adp.uid, function (results) {
+  db.query('select upasswd from user_list where uid=?', adp.uid, function (results,fields) {
     if (results.upasswd == adp.op) {
       db.query('update user_list set upasswd=? where uid=?', [adp.np, adp.uid], 1, function (err, results, fields) {
         if (err) res.send('0');
@@ -379,5 +383,43 @@ router.post('/memaddp', function (req, res) {
       });
     }
   });
+});
+
+
+router.post('/memadd', function (req, res) {
+  let pd = {
+    name: req.body.username,
+    pass: req.body.pass,
+    phone: req.body.phone
+  };
+  db.query('select count(uid) as count from user_list', [], 1, function (curruid,fields) {
+    let newuid = parseInt(curruid[0].count);
+    newuid += 1;
+    db.query('insert into user_list values(?,?,?,?)',[newuid,pd.name,pd.pass,pd.phone],1,function (err, results, fields) {
+      if (err) res.send('0');
+      else res.send('1');
+    });
+  });
+});
+
+router.post('/commadd', function (req, res) {
+  let pd = {
+    name: req.body.username,
+    pass: req.body.pass,
+    phone: req.body.phone
+  };
+  db.query('select count(uid) as count from user_list', [], 1, function (curruid,fields) {
+    let newuid = parseInt(curruid[0].count);
+    newuid += 1;
+    db.query('insert into user_list values(?,?,?,?)',[newuid,pd.name,pd.pass,pd.phone],1,function (err, results, fields) {
+      if (err) res.send('0');
+      else res.send('1');
+    });
+  });
+});
+
+
+router.get('/uploadimg', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/upload.html'));
 });
 module.exports = router;

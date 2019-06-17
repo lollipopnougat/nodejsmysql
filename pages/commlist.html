@@ -115,14 +115,15 @@
                     console.log($(this));
                 }
             });
-            
+
             layer.confirm('确认要删除所有选中项吗？', function () {
                 //捉到所有被选中的，发异步进行删除
                 ids.forEach(element => {
                     $.ajax({
                         url: '/delcomm',
                         data: {
-                            cid: element.parents().parents().next().children()[0].innerText
+                            cid: element.parents().parents().next().children()[0]
+                                .innerText
                         },
                         dataType: 'text',
                         type: 'post',
@@ -140,7 +141,7 @@
                     });
                 });
             });
-            
+
         }
     });
 </script>
