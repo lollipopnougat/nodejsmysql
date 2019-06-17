@@ -8,6 +8,7 @@ var condb = require('../db/dbConnect');
 var captcha = require('../api/captcha');
 var dbclient = condb.connect();
 var sha1 = require('js-sha1');
+var token = require('../api/token');
 //GET 主页
 router.get('/', function (req, res, next) {
   res.render('index', {
@@ -81,6 +82,7 @@ router.post('/logintest', function (req, res) {
     } else if (result[0].passwd === user.pw) {
       req.session.userName = user.ac;
       req.app.locals['username'] = user.ac;
+      res.setHeader('')
       res.send('1');
     } else {
       res.send('0');
@@ -204,16 +206,16 @@ router.get('/preview', function (req, res, next) {
             productslide4: picurls[3].purl,
             productslide5: picurls[4].purl,
             productslide6: picurls[5].purl,
-            thumbnailslide1: picurls[6].purl,
-            thumbnailslide2: picurls[7].purl,
-            thumbnailslide3: picurls[8].purl,
-            thumbnailslide4: picurls[9].purl,
-            thumbnailslide5: picurls[10].purl,
-            thumbnailslide6: picurls[11].purl,
+            thumbnailslide1: picurls[0].purl,
+            thumbnailslide2: picurls[1].purl,
+            thumbnailslide3: picurls[2].purl,
+            thumbnailslide4: picurls[3].purl,
+            thumbnailslide5: picurls[4].purl,
+            thumbnailslide6: picurls[5].purl,
             cname: results[0].cname,
-            csdesc: results[0].cdesc,
+            csdesc: results[0].ctype,
             cprice: results[0].cprice,
-            cdesc: '！'
+            cdesc: results[0].cdesc,
           });
         });
       });
@@ -421,5 +423,10 @@ router.post('/commadd', function (req, res) {
 
 router.get('/uploadimg', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/upload.html'));
+});
+
+router.get('/checkimg', function (req, res, next) {
+  req.query.cid;
+  db.query('select ')
 });
 module.exports = router;

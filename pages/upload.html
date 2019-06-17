@@ -1,19 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>文件上传</title>
+  <meta charset="utf-8">
+  <title>上传图片</title>
+  <link rel="stylesheet" href="src/css/layui.css" media="all">
+  <link rel="stylesheet" href="src/css/imgupload.css">
 </head>
+
 <body>
-  <h1>文件上传</h1>
-  <form action="/upload" method="post" enctype="multipart/form-data">
-      <input id="files" type="file" name="file" multiple/><br/> <!-- 这里的multiple属性是允许多文件上传的,一点要写-->
-      <input id="files" type="file" name="file" multiple/><br/>
-      <input id="files" type="file" name="file" multiple/><br/>
-      <input id="files" type="file" name="file" multiple/><br/>
-      <input id="files" type="file" name="file" multiple/><br/>
-      <input id="files" type="file" name="file" multiple/><br/>
-      <input type="submit" value="上传"/>
-  </form>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body ">
+            <div class="layui-inline layui-show-xs-block imgpage">
+              <span>输入商家号</span>
+              <input class="layui-input" autocomplete="off" id="pcid" style="text-align: center;" />
+            </div><br />
+            <div class="layui-inline layui-show-xs-block imgpage">
+              <button type="button" class="layui-btn" id="test1">
+                <i class="layui-icon">&#xe67c;</i>上传图片
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/layui.js"></script>
+  <script>
+    layui.use(['upload','jquery'], function () {
+      var upload = layui.upload;
+      var $ = layui.jquery;
+
+      //执行实例
+      var uploadInst = upload.render({
+        elem: '#test1' //绑定元素
+          ,
+        url: '/upload' //上传接口
+          ,
+        data: {
+          pcid: $('#pcid').val()
+        },
+        accept: 'images',
+        acceptMime: 'image/*',
+        size: 2048,
+        multiple: true,
+        number: 6,
+        before: function () {
+          console.log($('#pcid').val());
+        },
+        done: function (res) {
+          //上传完毕回调
+          if (res = '1') layer.msg('上传成功');
+          else if (res = '0') layer.msg('该商品图片已达上限');
+          else layer.msg(res);
+        },
+        error: function () {
+          layer.msg('上传文件失败');
+        }
+      });
+
+
+    });
+  </script>
 </body>
+
 </html>
