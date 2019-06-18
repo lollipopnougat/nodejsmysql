@@ -60,8 +60,8 @@
                                     <th lay-data="{field:'oid', width:80, sort: true}">OID</th>
                                     <th lay-data="{field:'ocid', width:80, sort: true, edit: 'text'}">商品ID</th>
                                     <th lay-data="{field:'onum', edit: 'text', width: 80}">数量</th>
-                                    <th lay-data="{field:'oprice', minWidth: 100}">总金额</th>
-                                    <th lay-data="{field:'ouid', sort: true, edit: 'text'}">买家</th>
+                                    <th lay-data="{field:'oprice', width: 100}">总金额</th>
+                                    <th lay-data="{field:'ouid', sort: true, width: 100, edit: 'text'}">买家号</th>
                                     <!--
                                     <th lay-data="{field:'sex', width:80,templet: '#switchTpl'}">性别</th>
                                     <th lay-data="{field:'city', edit: 'text', minWidth: 100}">城市</th>
@@ -79,11 +79,12 @@
 </body>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
+        <!--
         <button class="layui-btn layui-btn-sm" lay-event="getCheckData"> 获取选中行数据 </button>
         <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll"> 验证是否全选</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll"> 验证是否全选</button>-->
         <button class="layui-btn layui-btn-danger" onclick="del()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="xadmin.open('添加订单','/memadd',600,400)"><i class="layui-icon"></i>添加</button>
+        <!--<button class="layui-btn" onclick="xadmin.open('添加订单','/memadd',600,400)"><i class="layui-icon"></i>添加</button>-->
     </div>
 </script>
 <!--
@@ -113,7 +114,7 @@
             // 获取选中的id 
             $('tbody input').each(function (index, el) {
                 if ($(this).prop('checked')) {
-                    ids.push($(this).val())
+                    ids.push($(this))
                 }
             });
 
@@ -123,7 +124,7 @@
                     $.ajax({
                         url: '/delord',
                         data: {
-                            oid: element
+                            oid: element.parents().parents().next().children()[0].innerText
                         },
                         dataType: 'text',
                         type: 'post',
@@ -171,6 +172,8 @@
                         if (msg == '1') {
                             layer.alert("修改成功", {
                                 icon: 6
+                            },function () {
+                                window.location.reload();
                             });
                         } else {
                             layer.msg('修改失败');
@@ -180,6 +183,7 @@
             });
 
         //头工具栏事件
+        /*
         table.on('toolbar(test)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
             switch (obj.event) {
@@ -195,7 +199,7 @@
                     layer.msg(checkStatus.isAll ? '全选' : '未全选');
                     break;
             };
-        });
+        });*/
     });
 </script>
 

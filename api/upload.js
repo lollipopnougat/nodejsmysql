@@ -37,6 +37,11 @@ var loadfile = multer({
 router.post('/', loadfile.array('file', 10), function (req, res, next) {
   //这里10表示最大支持的文件上传数目
   console.log('参数: ' + req.body.pcid + req.query.pcid);
+  for (let j in req.files)
+  {
+    console.log(j);
+  }
+
   let adp = {};
   let files = req.files;
   if (files.length === 0) {

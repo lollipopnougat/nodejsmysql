@@ -285,6 +285,10 @@ router.get('/memadd', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/memadd.html'));
 });
 
+router.get('/orderlist', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+});
+
 router.get('/memlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
@@ -307,6 +311,22 @@ router.get('/commlst', function (req, res, next) {
   pag *= 10;
   //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
   db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
+    let sresults = {
+      "code": 0,
+      "msg": "",
+      "count": results.length,
+      "data": results
+    };
+    res.json(sresults);
+  });
+});
+
+router.get('/ordlst', function (req, res, next) {
+  let pag = req.query.page;
+  pag -= 1;
+  pag *= 10;
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+  db.query('select * from order_list limit ?,10', [pag], 1, function (results, fields) {
     let sresults = {
       "code": 0,
       "msg": "",
@@ -357,6 +377,18 @@ router.post('/changecomm', function (req, res) {
   });
 });
 
+router.post('/changeord', function (req, res) {
+  let pd = {
+    oid: req.body.poid,
+    field: req.body.pfield,
+    value: req.body.pvalue
+  };
+  db.query('update order_list set ' + pd.field + '=? where oid=?', [pd.value, pd.oid], 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
 router.post('/delmem', function (req, res) {
   db.query('delete from user_list where uid=?', req.body.uid, 1, function (err, results, fields) {
     if (err) res.send('0');
@@ -377,7 +409,7 @@ router.post('/memchangepass', function (req, res) {
     op: req.body.oldpass,
     np: req.body.newpass,
   };
-  db.query('select upasswd from user_list where uid=?', adp.uid, function (results,fields) {
+  db.query('select upasswd from user_list where uid=?', adp.uid, function (results, fields) {
     if (results.upasswd == adp.op) {
       db.query('update user_list set upasswd=? where uid=?', [adp.np, adp.uid], 1, function (err, results, fields) {
         if (err) res.send('0');
@@ -394,26 +426,33 @@ router.post('/memadd', function (req, res) {
     pass: req.body.pass,
     phone: req.body.phone
   };
-  db.query('select count(uid) as count from user_list', [], 1, function (curruid,fields) {
+  db.query('select count(uid) as count from user_list', [], 1, function (curruid, fields) {
     let newuid = parseInt(curruid[0].count);
     newuid += 1;
-    db.query('insert into user_list values(?,?,?,?)',[newuid,pd.name,pd.pass,pd.phone],1,function (err, results, fields) {
+    db.query('insert into user_list values(?,?,?,?)', [newuid, pd.name, pd.pass, pd.phone], 1, function (err, results, fields) {
       if (err) res.send('0');
       else res.send('1');
     });
   });
 });
 
-router.post('/commadd', function (req, res) {
+router.get('/commadd', function (req, res) {
+  res.sendFile(path.join(__dirname, '../pages/commadd.html'));
+});
+
+router.post('/commaddp', function (req, res) {
   let pd = {
-    name: req.body.username,
-    pass: req.body.pass,
-    phone: req.body.phone
+    cname: req.body.cname,
+    price: req.body.price,
+    desc: req.body.desc,
+    num: req.body.cnum,
+    ctype: req.body.ctype,
+    csid: req.body.seller
   };
-  db.query('select count(uid) as count from user_list', [], 1, function (curruid,fields) {
-    let newuid = parseInt(curruid[0].count);
-    newuid += 1;
-    db.query('insert into user_list values(?,?,?,?)',[newuid,pd.name,pd.pass,pd.phone],1,function (err, results, fields) {
+  db.query('select count(cid) as count from comm_list', [], 1, function (currcid, fields) {
+    let newcid = parseInt(currcid[0].count);
+    newcid += 1;
+    db.query('insert into comm_list values(?,?,?,?,?,?,?)', [newcid, pd.cname, pd.desc, pd.price, pd.ctype, pd.num, pd.csid], 1, function (err, results, fields) {
       if (err) res.send('0');
       else res.send('1');
     });
@@ -426,7 +465,8 @@ router.get('/uploadimg', function (req, res, next) {
 });
 
 router.get('/checkimg', function (req, res, next) {
-  req.query.cid;
-  db.query('select ')
+  db.query('select count(cid) as count from pic_list where cid=?', req.query.cid, 0, function (result, fields) {
+    result[0].count
+  });
 });
 module.exports = router;

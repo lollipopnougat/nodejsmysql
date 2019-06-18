@@ -6,6 +6,7 @@
   <title>上传图片</title>
   <link rel="stylesheet" href="src/css/layui.css" media="all">
   <link rel="stylesheet" href="src/css/imgupload.css">
+  <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
@@ -32,7 +33,7 @@
 
   <script src="src/layui.js"></script>
   <script>
-    layui.use(['upload','jquery'], function () {
+    layui.use(['upload', 'jquery'], function () {
       var upload = layui.upload;
       var $ = layui.jquery;
 
@@ -40,7 +41,7 @@
       var uploadInst = upload.render({
         elem: '#test1' //绑定元素
           ,
-        url: '/upload' //上传接口
+        url: '/upload?pcid=' + $('#pcid').val() //上传接口
           ,
         data: {
           pcid: $('#pcid').val()

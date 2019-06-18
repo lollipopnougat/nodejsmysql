@@ -28,23 +28,24 @@
                         <span class="x-red">*</span>商品类别</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_email" name="ctype" required="" lay-verify="ctype" autocomplete="off"
-                            class="layui-input"></div>
-                    <div class="layui-form-mid layui-word-aux">
-                        <span class="x-red">*</span></div>
+                            class="layui-input">
+                    </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_username" class="layui-form-label">
                         <span class="x-red">*</span>商品名</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_username" name="cname" required="" lay-verify="cname"
-                            autocomplete="off" class="layui-input"></div>
+                            autocomplete="off" class="layui-input">
+                    </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_pass" class="layui-form-label">
                         <span class="x-red">*</span>商品价格</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_pass" name="price" required="" lay-verify="price" autocomplete="off"
-                            class="layui-input"></div>
+                            class="layui-input">
+                    </div>
                     <div class="layui-form-mid layui-word-aux">大于零</div>
                 </div>
                 <div class="layui-form-item">
@@ -52,25 +53,29 @@
                         <span class="x-red">*</span>商品描述</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_desc" name="desc" required="" lay-verify="desc" autocomplete="off"
-                            class="layui-input"></div>
+                            class="layui-input">
+                    </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_num" class="layui-form-label">
                         <span class="x-red">*</span>商品存货量</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_num" name="cnum" required="" lay-verify="num" autocomplete="off"
-                            class="layui-input"></div>
+                            class="layui-input">
+                    </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_seller" class="layui-form-label">
                         <span class="x-red">*</span>商家</label>
                     <div class="layui-input-inline">
                         <input type="text" id="L_seller" name="seller" required="" lay-verify="seller"
-                            autocomplete="off" class="layui-input"></div>
+                            autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">商家ID</div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_repass" class="layui-form-label"></label>
-                    <button class="layui-btn" lay-filter="add" lay-submit="">增加</button></div>
+                    <button class="layui-btn" lay-filter="add" lay-submit>增加</button></div>
             </form>
         </div>
     </div>
@@ -85,11 +90,11 @@
                 form.verify({
                     cname: function (value) {
                         if (value.length < 2) {
-                            return '姓名至少得两个字符啊';
+                            return '商品名也太短了吧';
                         }
                     },
                     price: function (value) {
-                        if (value.parserFloat() < 0) return '价格必须大于0';
+                        if (parseFloat(value) < 0) return '价格必须大于0';
                     },
                     desc: function (value) {
                         if (value.length < 5) {
@@ -97,53 +102,52 @@
                         }
                     },
                     num: function (value) {
-                        if (value.parserInt() <= 0) {
+                        if (parseInt(value) <= 0) {
                             return '数量不合法';
                         }
                     },
                 });
 
                 //监听提交
-                form.on('submit(add)',
-                    function (data) {
-                        console.log(data);
-                        $.ajax({
-                            url: '/commadd',
-                            data: data.field,
-                            dataType: 'text',
-                            type: 'post',
-                            success: function (msg) {
-                                if (msg == '1') {
-                                    layer.alert("添加成功", {
-                                            icon: 6
-                                        },
-                                        function () {
-                                            // 获得frame索引
-                                            xadmin.close();
-                                            //var index = parent.layer.getFrameIndex(window.name);
-                                            //关闭当前frame
-                                            //parent.layer.close(index);
-                                            xadmin.father_reload();
-                                        });
-                                } else {
-                                    layer.msg('添加失败');
-                                }
+                form.on('submit(add)', function (data) {
+                    console.log(data);
+                    $.ajax({
+                        url: '/commaddp',
+                        data: data.field,
+                        dataType: 'text',
+                        type: 'post',
+                        success: function (msg) {
+                            if (msg == '1') {
+                                layer.alert("添加成功", {
+                                        icon: 6
+                                    },
+                                    function () {
+                                        // 获得frame索引
+                                        xadmin.close();
+                                        //var index = parent.layer.getFrameIndex(window.name);
+                                        //关闭当前frame
+                                        //parent.layer.close(index);
+                                        xadmin.father_reload();
+                                    });
+                            } else {
+                                layer.msg('添加失败');
                             }
-                        });
-
-                        //发异步，把数据提交给后端
-                        /*layer.alert("增加成功", {
-                                icon: 6
-                            },
-                            function () {
-                                //关闭当前frame
-                                xadmin.close();
-
-                                // 可以对父窗口进行刷新 
-                                xadmin.father_reload();
-                            });*/
-                        return false;
+                        }
                     });
+
+                    //发异步，把数据提交给后端
+                    /*layer.alert("增加成功", {
+                            icon: 6
+                        },
+                        function () {
+                            //关闭当前frame
+                            xadmin.close();
+
+                            // 可以对父窗口进行刷新 
+                            xadmin.father_reload();
+                        });*/
+                    return false;
+                });
 
             });
     </script>
