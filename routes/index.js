@@ -21,14 +21,6 @@ router.get('/', function (req, res, next) {
   // console.log('request ip: ' + getIp(req));
 });
 
-router.get('/test', function (req, res, next) {
-  if (req.session.userName) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
-    res.sendfile(path.join(__dirname, '../pages/index.html'));
-  } else {
-    //console.log('req.session.userName is ' + req.session.userName);
-    res.redirect('/login');
-  }
-});
 
 router.get('/login', function (req, res, next) {
   console.log(req.session.id);

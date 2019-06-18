@@ -38,7 +38,7 @@ module.exports = {
             //throw err;
           } else {
             let sss;
-            if (params) sss = ' ? -> ' + params;
+            if (params.length != 0) sss = ' ? -> ' + params;
             else sss = ' ';
             console.log('操作数据库: ' + sql + sss);
             if (results === undefined) callback(undefined);
@@ -55,7 +55,7 @@ module.exports = {
         connection.query(sql, params, function (err, results, fields) {
           if (err) console.log('数据库操作失败!' + err.toString());
           let sss;
-            if (params) sss = ' ? -> ' + params;
+            if (params.length != 0) sss = ' ? -> ' + params;
             else sss = ' ';
             console.log('操作数据库: ' + sql + sss);
           callback(err, results);
