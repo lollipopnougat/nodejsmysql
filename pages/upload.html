@@ -44,7 +44,9 @@
         url: '/upload?pcid=' + $('#pcid').val() //上传接口
           ,
         data: {
-          pcid: $('#pcid').val()
+          pcid: function() {
+            return $('#pcid').val();
+          }
         },
         accept: 'images',
         acceptMime: 'image/*',

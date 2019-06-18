@@ -34,7 +34,8 @@
 * 使用了 [nodemon](https://github.com/remy/nodemon) 做修改后自动编译的启动器
 * 从网上找来的前端商城页面
 * 使用了[x-admin](http://x.xuebingsi.com/)的后端管理模板(实际上基于layui，我们也对其进行了`ejs`魔改)
-* ajax均采用jquery完成(layui已经包含了jquery模块)
+* ajax均采用jquery完成(layui已经包含了jquery模块)，超大量使用ajax注意
+* 使用了 [multer](https://github.com/expressjs/multer) 配合 `layui` 处理上传文件
 
 ## ~~登陆界面和注册界面（github上仅界面，无后台）~~
 

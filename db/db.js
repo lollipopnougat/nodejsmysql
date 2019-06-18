@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 var mysql = require('mysql');
 var dbConfig = require('./db.config');
 var isSelect = /select/;
@@ -20,7 +21,7 @@ module.exports = {
         dbcon = dbConfig.nu;
         break;
     }
-    console.log('dbcon = ' + dbcon['user']);
+    console.log('dbcon = ' + dbcon.user);
     var connection = mysql.createConnection(dbcon);
     connection.connect(function (err) {
       if (err) {
@@ -36,7 +37,10 @@ module.exports = {
             return;
             //throw err;
           } else {
-            console.log('操作数据库: ' + sql + ' ? -> ' + params);
+            let sss;
+            if (params) sss = ' ? -> ' + params;
+            else sss = ' ';
+            console.log('操作数据库: ' + sql + sss);
             if (results === undefined) callback(undefined);
             else {
               //将查询出来的数据返回给回调函数，这个时候就没有必要使用错误前置的思想了，因为我们在这个文件中已经对错误进行了处理，如果数据检索报错，直接就会阻塞到这个文件中
@@ -50,7 +54,10 @@ module.exports = {
       } else {
         connection.query(sql, params, function (err, results, fields) {
           if (err) console.log('数据库操作失败!' + err.toString());
-          console.log('操作数据库: ' + sql + ' ? -> ' + params);
+          let sss;
+            if (params) sss = ' ? -> ' + params;
+            else sss = ' ';
+            console.log('操作数据库: ' + sql + sss);
           callback(err, results);
           //results作为数据操作后的结果
         });

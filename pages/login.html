@@ -26,7 +26,7 @@
             <div class="layui-input-captcha">
                 <input type="text" name="captcha" required lay-verify="required" placeholder="验证码" autocomplete="off"
                     class="captcha layui-input" id="captcha">
-                <img src="/captcha" alt="captcha" class="captcha">
+                <img id="captcha" src="/captcha" alt="captcha" class="captcha">
 
 
             </div>
@@ -61,8 +61,12 @@
                 // console.log(data.field);
                 let captcha = document.cookie.split('=')[1]
                 if ($('#captcha').val().toLowerCase() != captcha) {
-                    layer.msg('验证码错误');
-                    $('#captcha').css('border-bottom', '3px solid #FF5722');
+                    layer.msg('验证码错误', function () {
+                       //window.location.reload(); 
+                       $('#captcha').attr('src','/captcha?t='+ Math.random());
+                    });
+                    //$('#captcha').css('border-bottom', '3px solid #FF5722');
+                    
                 } else {
                     $.ajax({
                         url: '/logintest',

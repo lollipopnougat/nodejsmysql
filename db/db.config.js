@@ -21,7 +21,7 @@ module.exports.se = {
 
 module.exports.nu = {
   host     : 'localhost',
-  user     : 'nouser',
+  user     : 'noruser',
   password : 'uspasswd',
   database : 'website'
 };

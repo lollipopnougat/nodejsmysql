@@ -2,7 +2,7 @@
 
 <head>
   <title><%= title %></title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
   <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
@@ -150,8 +150,8 @@
                   <p>价格: <span>￥<%= cprice %></span></p>
                 </div>
                 <div class="available">
-                  <p>参数 :</p>
-                  <ul>
+                  <p>剩余 : <%= cnum %> 件</p>
+                  <ul><!--
                     <li>颜色:
                       <select>
                         <option>银色</option>
@@ -165,13 +165,10 @@
                         <option>小</option>
                         <option>特大</option>
                         <option>迷你</option>
-                      </select></li>
-                    <li>数量:<select>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                      </select></li>-->
+                    <li>购买数量:<select class="m-wrap" id="cnum" style="width: 100px; padding: 2px 0;">
+                        <option value="0">1</option>
+                        <option value="1">2</option>
                       </select></li>
                   </ul>
                 </div>
@@ -183,7 +180,25 @@
                       <li><a href="#"><img src="images/twitter.png" alt="" /></a></li>
                     </ul>
                   </div>
-                  <div class="button"><span><a href="#">添加到购物车</a></span></div>
+                  <div class="button"><span><a href="javascript:void(0);" onclick="buy()">购买</a></span></div>
+                  <script>
+                    var adress = window.location.href.split('=')[1];
+                    var buy = function () {
+                      $.ajax({
+                        url: '/buy',
+                        data: {
+                          cid: adress,
+                          num: $('cnum').val(),
+                        },
+                        dataType: 'text',
+                        type: 'post',
+                        success: function(msg) {
+                          if(msg == '1') alert('购买成功!');
+                          else alert('失败！');
+                        }
+                      });
+                    }
+                  </script>
                   <div class="clear"></div>
                 </div>
                 <div class="wish-list">
@@ -275,7 +290,7 @@
                 <a href="#"><img src="images/new-pic1.jpg" alt=""></a>
                 <div class="price" style="border:none">
                   <div class="add-cart" style="float:none">
-                    <h4><a href="#">添加购物车</a></h4>
+                    <h4><a href="#">查看详情</a></h4>
                   </div>
                   <div class="clear"></div>
                 </div>
@@ -284,7 +299,7 @@
                 <a href="#"><img src="images/new-pic2.jpg" alt=""></a>
                 <div class="price" style="border:none">
                   <div class="add-cart" style="float:none">
-                    <h4><a href="#">添加购物车</a></h4>
+                    <h4><a href="#">查看详情</a></h4>
                   </div>
                   <div class="clear"></div>
                 </div>
@@ -293,7 +308,7 @@
                 <a href="#"><img src="images/new-pic4.jpg" alt=""></a>
                 <div class="price" style="border:none">
                   <div class="add-cart" style="float:none">
-                    <h4><a href="#">添加购物车</a></h4>
+                    <h4><a href="#">查看详情</a></h4>
                   </div>
                   <div class="clear"></div>
                 </div>
@@ -302,7 +317,7 @@
                 <img src="images/new-pic3.jpg" alt="">
                 <div class="price" style="border:none">
                   <div class="add-cart" style="float:none">
-                    <h4><a href="#">添加购物车</a></h4>
+                    <h4><a href="#">查看详情</a></h4>
                   </div>
                   <div class="clear"></div>
                 </div>

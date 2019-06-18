@@ -5,32 +5,7 @@ var multer = require('multer');
 var db = require('../db/db');
 var router = express.Router();
 
-/*
-var upload = multer({
-  dest: 'tmp/upload'
-});*/
-/*
-router.post('/', upload.any(), function (req, res, next) {
-  console.log(req.files[0]); // 上传的文件信息
-
-  var des_file = "./public/images/upload/" + req.files[0].originalname;
-  fs.readFile(req.files[0].path, function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        response = {
-          message: '上传成功',
-          filename: req.files[0].originalname
-        };
-        console.log(response);
-        res.end(JSON.stringify(response));
-      }
-    });
-  });
-});
-*/
-//设置文件存储路径
+//设置文件暂存路径
 var loadfile = multer({
   dest: 'tmp/upload/'
 });
@@ -48,10 +23,9 @@ router.post('/', loadfile.array('file', 10), function (req, res, next) {
     res.send('上传文件不能为空');
     return;
   } else {
-    db.query('select count(pid) as c from pic_list where pid=?', req.body.pcid, 1, function (err, result, fields) {
-      let currpicnum = parseInt(result[0].c);
-      let alpicnum = 6 - currpicnum;
-      if (alpicnum < files.length) {
+    db.query('select 6-(select count(pid) from pic_list where pcid=?) as c', req.body.pcid, 1, function (err, result, fields) {
+      let alnum = parseInt(result[0].c);
+      if (alnum <= 0) {
         res.send('0');
         return;
       } else {

@@ -20,6 +20,7 @@ app.use(bodyparser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(session({
+  name: 'user',
   secret: 'lnplnp', // 对session id 相关的cookie 进行签名
   resave: true,
   saveUninitialized: true, // 是否保存未初始化的会话
