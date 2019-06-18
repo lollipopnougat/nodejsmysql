@@ -36,6 +36,7 @@
 * 使用了[x-admin](http://x.xuebingsi.com/)的后端管理模板(实际上基于layui，我们也对其进行了`ejs`魔改)
 * ajax均采用jquery完成(layui已经包含了jquery模块)，超大量使用ajax注意
 * 使用了 [multer](https://github.com/expressjs/multer) 配合 `layui` 处理上传文件
+* 使用 [pm2](https://github.com/Unitech/pm2) 进行进程守护
 
 ## ~~登陆界面和注册界面（github上仅界面，无后台）~~
 
@@ -48,6 +49,13 @@
 
 ~~看了一下db文件夹，觉得有必要重构一下数据库连接了，顺便得把之前测试的乱七八糟全撤掉，又是大修……~~<br/>
 经过一番改动终于弃用了一个数据库连接的文件，现在正在逐步替换掉剩余部分
+
+
+## 怎么跨平台/机器部署
+
+首先你要确认你的npm(6.9.0)版本、node(10.15.3以上)版本、mysql(8.0以上)的版本，然后`git clone` 项目<br/>
+然后 `cd nodejsmysql`到项目目录里输入 `npm i` 然后运行 `npm start` 即可执行<br/>
+当然还可以不输入 `npm start` ，输入 `pm2 start dev` 即可使用 `pm2` 进行进程保护(常驻内存，进程崩溃会立刻重启)
 
 ## 写在最后
 
