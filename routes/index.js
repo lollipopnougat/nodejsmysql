@@ -7,6 +7,9 @@ var session = require('express-session');
 var condb = require('../db/dbConnect');
 var captcha = require('../api/captcha');
 var dbclient = condb.connect();
+var fs = require('fs');
+
+var ltn = 0;
 //var sha1 = require('js-sha1');
 //var token = require('../api/token');
 //const crypto = require('crypto');
@@ -46,6 +49,7 @@ router.post('/blogin', function (req, res) {
     } else {
       req.session.aid = result[0].aid;
       req.session.aname = pd.aname;
+      res.cookie('aname', pd.aname);
       res.send('1');
     }
   });
@@ -54,7 +58,7 @@ router.post('/blogin', function (req, res) {
 router.get('/register', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/register.html'));
 });
-
+/*
 router.get('/tpch', function (req, res, next) {
   //查询r表
   db.query('select * from r;', [], function (results, fields) {
@@ -69,17 +73,8 @@ router.get('/tpch', function (req, res, next) {
     //res.render('index', { title: 'Express11' });
   });
 });
+*/
 
-router.post('/memchapas', function (req, res) {
-  let tmp = {
-    un: req.body.username,
-    op: req.body.oldpass,
-    np: req.body.newpass,
-    rp: req.body.repass
-  };
-  console.log(tmp);
-  res.send('1');
-});
 
 router.post('/logintest', function (req, res) {
   console.log('id: ' + req.session.id);
@@ -93,6 +88,7 @@ router.post('/logintest', function (req, res) {
     if (result.length != 0) {
       req.session.uid = result[0].uid;
       req.session.uname = pd.uname;
+      res.cookie('username', pd.uname);
       res.send('1');
     } else res.send('0');
   });
@@ -105,7 +101,8 @@ router.get('/logout', function (req, res, next) {
     if (err) {
       console.log(err);
     } else {
-      res.redirect('/home');
+      if (req.query.from || req.query.goto) res.redirect(req.query.from || req.query.goto);
+      else res.redirect('/home');
     }
   });
   //res.redirect('/home');
@@ -142,6 +139,7 @@ router.post('/regtest', function (req, res) {
 
 
 router.get('/home', function (req, res, next) {
+  ltn++;
   res.sendfile(path.join(__dirname, '../pages/home.html'));
 });
 
@@ -217,22 +215,37 @@ router.get('/homejs', function (req, res, next) {
 });
 
 router.get('/welcome', function (req, res, next) {
-  if (req.session.aname) {
-    res.render('welcome', {
-      username: req.session.aname, //req.session.userName,
-      articlenum: 0,
-      usernum: 1,
-      commentnum: 0,
-      commoditnum: 1,
-      version: '1.0.31',
-      serveroot: '127.0.0.1',
-      systeminfo: 'Windows NT 10.0',
-      envinfo: 'Windows 10 x64',
-      nodever: 'v10.16.0',
-      expressver: '4.16.1',
-      mysqlver: '8.0.15',
-      npmver: '6.9.0',
-      filelimits: '2.0 MByte'
+  if (req.cookies.aname) {
+    db.query('select count(uid) as c from user_list', [], 1, function (cuid, fields) {
+      db.query('select count(cid) as c from comm_list', [], 1, function (ccid, fields) {
+        db.query('select count(aid) as c from admin_list', [], 1, function (caid, fields) {
+          db.query('select count(sid) as c from seller_list', [], 1, function (csid, fields) {
+            db.query('select count(pid) as c from pic_list', [], 1, function (cpid, fields) {
+              db.query('select count(oid) as c from order_list', [], 1, function (coid, fields) {
+                res.render('welcome', {
+                  username: req.cookies.aname, //req.session.userName,
+                  anum: caid[0].c,
+                  unum: cuid[0].c,
+                  snum: csid[0].c,
+                  cnum: ccid[0].c,
+                  onum: coid[0].c,
+                  pnum: cpid[0].c,
+                  todaynum: ltn,
+                  version: '1.0.31',
+                  serveroot: '127.0.0.1',
+                  systeminfo: 'Windows NT 10.0',
+                  envinfo: 'Windows 10 x64',
+                  nodever: 'v10.16.0',
+                  expressver: '4.16.1',
+                  mysqlver: '8.0.15',
+                  npmver: '6.9.0',
+                  filelimits: '2.0 MByte'
+                });
+              });
+            });
+          });
+        });
+      });
     });
   } else {
     res.redirect('/bslogin');
@@ -265,6 +278,10 @@ router.get('/bslogin', function (req, res, next) {
     if (req.query.from) res.redirect(req.query.from);
     else res.redirect('/bsindex');
   } else res.sendfile(path.join(__dirname, '../pages/bslogin.html'));
+});
+
+router.get('/piclist', function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../pages/piclist.html'));
 });
 
 router.get('/orderlist', function (req, res, next) {
@@ -303,15 +320,16 @@ router.get('/memlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
-    let sresults = {
-      "code": 0,
-      "msg": "",
-      "count": results.length,
-      "data": results
-    };
-    res.json(sresults);
+  db.query('select count(uid) as c from user_list', [], 1, function (uidnum, fields) {
+    db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
+      let sresults = {
+        "code": 0,
+        "msg": "",
+        "count": uidnum[0].c,
+        "data": results
+      };
+      res.json(sresults);
+    });
   });
 });
 
@@ -319,15 +337,16 @@ router.get('/commlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
-    let sresults = {
-      "code": 0,
-      "msg": "",
-      "count": results.length,
-      "data": results
-    };
-    res.json(sresults);
+  db.query('select count(cid) as c from comm_list', [], 1, function (cidnum, fields) {
+    db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
+      let sresults = {
+        "code": 0,
+        "msg": "",
+        "count": cidnum[0].c,
+        "data": results
+      };
+      res.json(sresults);
+    });
   });
 });
 
@@ -335,15 +354,16 @@ router.get('/ordlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select * from order_list limit ?,10', [pag], 1, function (results, fields) {
-    let sresults = {
-      "code": 0,
-      "msg": "",
-      "count": results.length,
-      "data": results
-    };
-    res.json(sresults);
+  db.query('select count(oid) as c from order_list', [], 1, function (oidnum, fields) {
+    db.query('select * from order_list limit ?,10', [pag], 1, function (results, fields) {
+      let sresults = {
+        "code": 0,
+        "msg": "",
+        "count": oidnum[0].c,
+        "data": results
+      };
+      res.json(sresults);
+    });
   });
 });
 
@@ -352,15 +372,36 @@ router.get('/sellst', function (req, res, next) {
   pag -= 1;
   pag *= 10;
   //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select * from seller_list limit ?,10', [pag], 1, function (results, fields) {
-    let sresults = {
-      "code": 0,
-      "msg": "",
-      "count": results.length,
-      "data": results
-    };
-    res.json(sresults);
+  db.query('select count(sid) as c from seller_list', [], 1, function (sidnum, fields) {
+    db.query('select * from seller_list limit ?,10', [pag], 1, function (results, fields) {
+      let sresults = {
+        "code": 0,
+        "msg": "",
+        "count": sidnum[0].c,
+        "data": results
+      };
+      res.json(sresults);
+    });
   });
+});
+
+router.get('/piclst', function (req, res, next) {
+  let pag = req.query.page;
+  pag -= 1;
+  pag *= 10;
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+  db.query('select count(pid) as c from pic_list', [], 1, function (pidnum, fields) {
+    db.query('select * from pic_list limit ?,10', [pag], 1, function (results, fields) {
+      let sresults = {
+        "code": 0,
+        "msg": "",
+        "count": pidnum[0].c,
+        "data": results
+      };
+      res.json(sresults);
+    });
+  });
+
 });
 
 router.post('/changemem', function (req, res) {
@@ -411,10 +452,59 @@ router.post('/changeord', function (req, res) {
   });
 });
 
+router.post('/renpic', function (req, res) {
+  let pd = {
+    pid: req.body.ppid,
+    field: req.body.pfield,
+    value: req.body.pvalue
+  };
+  
+  db.query('select purl from pic_list where pid=?', pd.pid, 1, function (purl, fields) {
+    db.query('update pic_list set ' + pd.field + '=? where pid=?', [pd.value, pd.pid], 1, function (err, results, fields) {
+      if (err) res.send('0');
+      else {
+        if (pd.field == 'pname') {
+          try {
+            console.log(path.join(__dirname, '../public/uploadimg/' + pd.value).toString());
+            fs.renameSync(path.join(__dirname, '../public/' + purl[0].purl), path.join(__dirname, '../public/uploadimg/' + pd.value));
+          } catch (er) {
+            console.log('重命名错误! ' + er.toString());
+            let oname = purl[0].purl.split('/')[1];
+            db.query('update pic_list set pname=? where pid = ?', [oname, pd.pid], function (e, resu) {
+              if (e) console.log(e.toString());
+              res.send('0');
+              return;
+            });
+          }
+          res.send('1');
+        } else res.send('1');
+      }
+    });
+  });
+
+});
+
 router.post('/delmem', function (req, res) {
   db.query('delete from user_list where uid=?', req.body.uid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
+  });
+});
+
+router.post('/delpic', function (req, res) {
+  db.query('select purl from pic_list where pid=?', req.body.pid, 1, function (purl, fields) {
+    try {
+      fs.unlinkSync(path.join(__dirname, '../public/' + purl[0].purl));
+    }
+    catch(er){
+      console.log('操作文件失败' + er.toString());
+      res.send('0');
+      return;
+    }
+    db.query('delete from pic_list where pid=?', req.body.pid, 1, function (err, results, fields) {
+      if (err) res.send('2');
+       else res.send('1');
+    });
   });
 });
 
@@ -432,9 +522,17 @@ router.post('/delcomm', function (req, res) {
   });
 });
 
-router.post('/memchangepass', function (req, res) {
+router.get('/chmypas', function (req, res) {
+  res.render('changepas', {
+    id: req.query.id,
+    ident: req.query.ident
+  });
+});
+
+router.post('/changepass', function (req, res) {
   let adp = {
-    uid: req.body.uid,
+    id: req.body.id,
+    ident: req.body.ident,
     op: req.body.oldpass,
     np: req.body.newpass,
   };
@@ -465,24 +563,6 @@ router.post('/memadd', function (req, res) {
   });
 });
 
-router.post('/memadd', function (req, res) {
-  let pd = {
-    name: req.body.username,
-    pass: req.body.pass,
-    phone: req.body.phone
-  };
-  db.query('select count(uid) as count from user_list', [], 1, function (curruid, fields) {
-    let newuid = parseInt(curruid[0].count);
-    newuid += 1;
-    db.query('insert into user_list values(?,?,?,?)', [newuid, pd.name, pd.pass, pd.phone], 1, function (err, results, fields) {
-      if (err) res.send('0');
-      else res.send('1');
-    });
-  });
-});
-
-
-
 router.post('/commaddp', function (req, res) {
   let pd = {
     cname: req.body.cname,
@@ -503,7 +583,7 @@ router.post('/commaddp', function (req, res) {
 });
 
 
-router.get('/uploadimg', function (req, res, next) {
+router.get('/uploadi', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/upload.html'));
 });
 
@@ -519,20 +599,23 @@ router.post('/buy', function (req, res) {
     num: req.body.num,
     uid: req.session.uid
   };
+  console.log(pd);
   if (pd.uid === undefined) res.redirect('/login?from=/preview?cid=' + pd.cid);
-  db.query('select count(oid) as count from order_list', [], 0, function (curroid, fields) {
-    let newoid = parseInt(curroid[0].count);
-    console.log('新订单号oid: ' + newoid);
-    newoid += 1;
-    db.query('select cprice from comm_list where cid = ?', pd.cid, 3, function (cprice, fields) {
-      let price = parseFloat(cprice[0].cprice) * parseInt(pd.num);
-
-      db.query('insert into order_list values(?,?,?,?,?)', [newoid, pd.cid, pd.num, price, pd.uid], 3, function (err, results, fields) {
-        if (err) res.send('0');
-        else res.send('1');
+  else {
+    db.query('select count(oid) as count from order_list', [], 3, function (curroid, fields) {
+      let newoid = parseInt(curroid[0].count);
+      newoid += 1;
+      console.log('新订单号oid: ' + newoid);
+      db.query('select cprice from comm_list where cid = ?', pd.cid, 3, function (cprice, fields) {
+        let price = parseFloat(cprice[0].cprice) * parseInt(pd.num);
+        db.query('insert into order_list values(?,?,?,?,?)', [newoid, pd.cid, pd.num, price, pd.uid], 3, function (err, results, fields) {
+          if (err) res.send('0');
+          else res.send('1');
+        });
       });
     });
-  });
+  }
+
 });
 
 

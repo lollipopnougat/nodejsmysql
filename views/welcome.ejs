@@ -39,44 +39,44 @@
                             <ul class="layui-row layui-col-space10 layui-this x-admin-carousel x-admin-backlog">
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
+                                        <h3>管理员数</h3>
                                         <p>
-                                            <cite><%= articlenum %></cite></p>
+                                            <cite><%= anum %></cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
                                         <h3>会员数</h3>
                                         <p>
-                                            <cite><%= usernum %></cite></p>
+                                            <cite><%= unum %></cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>回复数</h3>
+                                        <h3>商家数</h3>
                                         <p>
-                                            <cite><%= commentnum %></cite></p>
+                                            <cite><%= snum %></cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
                                         <h3>商品数</h3>
                                         <p>
-                                            <cite><%= commoditnum %></cite></p>
+                                            <cite><%= cnum %></cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
+                                        <h3>订单数</h3>
                                         <p>
-                                            <cite>67</cite></p>
+                                            <cite><%= onum %></cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6 ">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
+                                        <h3>图片数</h3>
                                         <p>
-                                            <cite>6766</cite></p>
+                                            <cite><%= pnum %></cite></p>
                                     </a>
                                 </li>
                             </ul>
@@ -85,10 +85,10 @@
                 </div>
                 <div class="layui-col-sm6 layui-col-md3">
                     <div class="layui-card">
-                        <div class="layui-card-header">下载
-                            <span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span></div>
+                        <div class="layui-card-header">访问量
+                            <span class="layui-badge layui-bg-cyan layuiadmin-badge">今天</span></div>
                         <div class="layui-card-body  ">
-                            <p class="layuiadmin-big-font">33,555</p>
+                            <p class="layuiadmin-big-font"><%= todaynum %></p>
                             <p>新下载
                                 <span class="layuiadmin-span-color">10%
                                     <i class="layui-inline layui-icon layui-icon-face-smile-b"></i></span>

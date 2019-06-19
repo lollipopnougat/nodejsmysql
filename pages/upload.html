@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="src/css/layui.css" media="all">
   <link rel="stylesheet" href="src/css/imgupload.css">
   <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+  <script type="text/javascript" src="./src/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="./js/xadmin.js"></script>
 </head>
 
 <body>
@@ -16,10 +18,11 @@
         <div class="layui-card">
           <div class="layui-card-body ">
             <div class="layui-inline layui-show-xs-block imgpage">
-              <span>输入商家号</span>
-              <input class="layui-input" autocomplete="off" id="pcid" style="text-align: center;" />
+              <h3 style="text-align: center;color: #009688; margin: 10px;">图片不能超过2M，分辨率不能大于480x360</h3>
+              <span>输入对应商品号</span>
+              <input class="layui-input" autocomplete="off" id="pcid" style="width: 100%;text-align: center;" />
             </div><br />
-            <div class="layui-inline layui-show-xs-block imgpage">
+            <div class="layui-inline layui-show-xs-block imgpage" style="text-align: center;">
               <button type="button" class="layui-btn" id="test1">
                 <i class="layui-icon">&#xe67c;</i>上传图片
               </button>
@@ -31,7 +34,6 @@
     </div>
   </div>
 
-  <script src="src/layui.js"></script>
   <script>
     layui.use(['upload', 'jquery'], function () {
       var upload = layui.upload;
@@ -41,10 +43,10 @@
       var uploadInst = upload.render({
         elem: '#test1' //绑定元素
           ,
-        url: '/upload?pcid=' + $('#pcid').val() //上传接口
+        url: '/upload' //上传接口
           ,
         data: {
-          pcid: function() {
+          pcid: function () {
             return $('#pcid').val();
           }
         },
@@ -55,12 +57,18 @@
         number: 6,
         before: function () {
           console.log($('#pcid').val());
+          if ($('#pcid').val() == '') {
+            alert('还有参数没填!!');
+            xadmin.close();
+          }
         },
         done: function (res) {
           //上传完毕回调
           if (res = '1') layer.msg('上传成功');
           else if (res = '0') layer.msg('该商品图片已达上限');
           else layer.msg(res);
+          xadmin.close();
+          xadmin.father_reload();
         },
         error: function () {
           layer.msg('上传文件失败');

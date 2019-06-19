@@ -26,7 +26,13 @@
                 <div class="layui-form-item">
                     <label for="L_username" class="layui-form-label">ID</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="L_username" name="uid" value="<%= username %>" class="layui-input">
+                        <input type="text" id="L_username" name="id" value="<%= id %>" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_username" class="layui-form-label">ID</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="ident" value="<%= ident %>" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -53,7 +59,7 @@
                 </div>
                 <div class="layui-form-item">
                     <label for="L_repass" class="layui-form-label"></label>
-                    <button class="layui-btn" lay-filter="save" lay-submit>增加</button></div>
+                    <button class="layui-btn" lay-filter="save" lay-submit>修改</button></div>
             </form>
         </div>
     </div>
@@ -67,7 +73,7 @@
                 console.log(data);
                  //发异步，把数据提交给后端
                 $.ajax({
-                    url: '/memchapas',
+                    url: '/changepass',
                     data: data.field,
                     dataType: 'text',
                     type: 'post',
@@ -121,12 +127,6 @@
 
         });
     </script>
-    <!--<script>var _hmt = _hmt || []; (function() {
-                var hm = document.createElement("script");
-                hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
-                var s = document.getElementsByTagName("script")[0];
-                s.parentNode.insertBefore(hm, s);
-            })();</script>-->
 </body>
 
 </html>

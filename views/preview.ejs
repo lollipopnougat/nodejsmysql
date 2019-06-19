@@ -169,18 +169,23 @@
                   <div class="button"><span><a href="javascript:void(0);" onclick="buy()">购买</a></span></div>
                   <script>
                     var adress = window.location.href.split('=')[1];
+                    var cnum = parseInt($('#cnum').val()) + 1;
                     var buy = function () {
                       $.ajax({
                         url: '/buy',
                         data: {
                           cid: adress,
-                          num: $('cnum').val(),
+                          num: cnum,
                         },
                         dataType: 'text',
                         type: 'post',
                         success: function(msg) {
                           if(msg == '1') alert('购买成功!');
-                          else alert('失败！');
+                          else if (msg == '-1') {
+                            location.href = '/login?from=/preview?cid=2'
+                            }
+                            else alert('失败！');
+
                         }
                       });
                     }

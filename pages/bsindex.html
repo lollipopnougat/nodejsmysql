@@ -56,13 +56,13 @@
             </ul>
             <ul class="layui-nav right" lay-filter="">
                 <li class="layui-nav-item">
-                    <a href="javascript:;">admin</a>
+                    <a href="javascript:;">我</a>
                     <dl class="layui-nav-child">
                         <!-- 二级菜单 -->
                         <dd>
-                            <a onclick="xadmin.open('个人信息','http://www.baidu.com')">个人信息</a></dd>
+                            <a onclick="xadmin.open('个人信息','/chmypas')">个人信息</a></dd>
                         <dd>
-                            <a onclick="xadmin.open('切换帐号','http://www.baidu.com')">切换帐号</a></dd>
+                            <a href="/logout?goto=/bslogin">切换帐号</a></dd>
                         <dd>
                             <a href="./login.html">退出</a></dd>
                     </dl>
@@ -175,7 +175,7 @@
                                     <cite>商品信息修改</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('商品图片修改','/uploadimg')">
+                                <a onclick="xadmin.add_tab('商品图片修改','/piclist')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>商品图片修改</cite></a>
                             </li>

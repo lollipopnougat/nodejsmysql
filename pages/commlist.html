@@ -38,12 +38,6 @@
                     <div class="layui-card-body ">
                         <form class="layui-form layui-col-space5">
                             <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input" autocomplete="off" placeholder="开始日" name="start" id="start">
-                            </div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input" autocomplete="off" placeholder="截止日" name="end" id="end">
-                            </div>
-                            <div class="layui-inline layui-show-xs-block">
                                 <input type="text" name="username" placeholder="请输入商品名" autocomplete="off"
                                     class="layui-input"></div>
                             <div class="layui-inline layui-show-xs-block">
@@ -60,10 +54,10 @@
                                     <th lay-data="{type:'checkbox'}">CID</th>
                                     <th lay-data="{field:'cid', width:80, sort: true}">CID</th>
                                     <th lay-data="{field:'cname', minWidth:80, sort: true, edit: 'text'}">商品名称</th>
-                                    <th lay-data="{field:'cprice', edit: 'text', width: 80}">价格</th>
-                                    <th lay-data="{field:'cnum', edit: 'text', width: 80}">数量</th>
-                                    <th lay-data="{field:'ctype', edit: 'text', width: 80}">分类</th>
-                                    <th lay-data="{field:'csid', edit: 'text', width: 80}">发布者ID</th>
+                                    <th lay-data="{field:'cprice', sort: true, edit: 'text', width: 80}">价格</th>
+                                    <th lay-data="{field:'cnum', sort: true, edit: 'text', width: 80}">数量</th>
+                                    <th lay-data="{field:'ctype', sort: true, edit: 'text', width: 80}">分类</th>
+                                    <th lay-data="{field:'csid', sort: true, edit: 'text', width: 80}">发布者ID</th>
                                     <th lay-data="{field:'cdesc', edit: 'text', minWidth: 150}">描述</th>
                                     <!--
                                     <th lay-data="{field:'sex', width:80,templet: '#switchTpl'}">性别</th>

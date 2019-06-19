@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Socket.IO Example</title>
+</head>
+
+<body>
+  <h1>Socket.IO及时通讯</h1>
+  <p id="count"></p>
+
+  <span class="logoutBtn">退出</sapn>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script>
+      //建立连接
+      socket = io.connect('http://localhost:80');
+
+      socket.emit("login", {
+        username: 'defaultName'
+      });
+
+      //接收服务端推送的信息
+      socket.on("users", function (obj) {
+        //var curContent = contentNode.html();
+        //contentNode.html(curContent+obj.msg);
+        console.log('当前在线：' + obj.number)
+      });
+
+
+      $('.logoutBtn').click(function () {
+        socket.emit("logout", {
+          username: 'defaultName'
+        });
+      });
+    </script>
+
+</body>
+
+</html>
