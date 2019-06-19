@@ -27,9 +27,9 @@ router.get('/', function (req, res, next) {
 
 router.get('/login', function (req, res, next) {
   console.log(req.session.id);
-  if (req.session.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+  if (req.cookies.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
-    console.log("用户 " + req.session.uid + " 已登录");
+    console.log("用户 " + req.cookies.uid + " 已登录");
     if (req.query.from) res.redirect(req.query.from);
     else res.redirect('/homejs');
   } else res.sendfile(path.join(__dirname, '../pages/login.html'));
@@ -38,21 +38,53 @@ router.get('/login', function (req, res, next) {
 router.post('/blogin', function (req, res) {
   console.log('id: ' + req.session.id);
   let pd = {
-    aname: req.body.username,
-    apass: req.body.password
+    name: req.body.username,
+    pass: req.body.password,
+    type: req.body.type
   };
   console.log(pd);
-  //hash.update(pd.apass);
-  db.query('select aid from admin_list where aname=? and apasswd=sha1(?)', [pd.aname, pd.apass], 0, function (result, fields) {
-    if (result.length == 0) {
-      res.send('0');
-    } else {
-      req.session.aid = result[0].aid;
-      req.session.aname = pd.aname;
-      res.cookie('aname', pd.aname);
-      res.send('1');
-    }
-  });
+  if (pd.type == 'a') {
+    //hash.update(pd.apass);
+    db.query('select aid from admin_list where aname=? and apasswd=sha1(?)', [pd.name, pd.pass], 0, function (result, fields) {
+      if (result.length == 0) {
+        res.send('0');
+      } else {
+        req.session.aid = result[0].aid;
+        req.session.aname = pd.name;
+        if (req.cookies.sid) res.clearCookie('sid');
+        if (req.cookies.sname) res.clearCookie('sname');
+        res.cookie('aname', pd.name, {
+          maxAge: 1000 * 60 * 10,
+          httpOnly: true
+        });
+        res.cookie('aid', result[0].aid, {
+          maxAge: 1000 * 60 * 10,
+          httpOnly: true
+        });
+        res.send('1');
+      }
+    });
+  } else if (pd.type == 's') {
+    db.query('select sid from seller_list where sname=? and spasswd=sha1(?)', [pd.name, pd.pass], 0, function (result, fields) {
+      if (result.length == 0) {
+        res.send('0');
+      } else {
+        req.session.sid = result[0].sid;
+        req.session.sname = pd.name;
+        if (req.cookies.aid) res.clearCookie('aid');
+        if (req.cookies.aname) res.clearCookie('aname');
+        res.cookie('sname', pd.name, {
+          maxAge: 1000 * 60 * 10,
+          httpOnly: true
+        });
+        res.cookie('sid', result[0].sid, {
+          maxAge: 1000 * 60 * 10,
+          httpOnly: true
+        });
+        res.send('1');
+      }
+    });
+  }
 });
 
 router.get('/register', function (req, res, next) {
@@ -80,15 +112,27 @@ router.post('/logintest', function (req, res) {
   console.log('id: ' + req.session.id);
   let pd = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
     uname: req.body.account,
-    upass: req.body.password
+    upass: req.body.password,
+    captc: req.body.captcha
   };
   console.log(pd);
+  if (pd.captc != req.cookies.captcha) {
+    res.send('2');
+    return;
+  }
   //hash.update(pd.upass);
   db.query('select uid from user_list where uname=? and upasswd = sha1(?)', [pd.uname, pd.upass], 0, function (result, fields) {
     if (result.length != 0) {
       req.session.uid = result[0].uid;
       req.session.uname = pd.uname;
-      res.cookie('username', pd.uname);
+      res.cookie('uname', pd.uname, {
+        maxAge: 1000 * 60 * 10,
+        httpOnly: true
+      });
+      res.cookie('uid', result[0].uid, {
+        maxAge: 1000 * 60 * 10,
+        httpOnly: true
+      });
       res.send('1');
     } else res.send('0');
   });
@@ -96,6 +140,19 @@ router.post('/logintest', function (req, res) {
 
 //退出
 router.get('/logout', function (req, res, next) {
+  if (req.cookies.aid) {
+    res.clearCookie('aid');
+    res.clearCookie('aname');
+  }
+  if (req.cookies.sid) {
+    res.clearCookie('sid');
+    res.clearCookie('sname');
+  }
+  if (req.cookies.uid) {
+    res.clearCookie('uid');
+    res.clearCookie('uname');
+  }
+
   //req.session.userName = null; // 删除session
   req.session.destroy(function (err) {
     if (err) {
@@ -109,7 +166,15 @@ router.get('/logout', function (req, res, next) {
 });
 
 router.post('/chuser', function (req, res) {
-  if (req.body.user == "") res.send('-1');
+  if (req.body.user == '') {
+    res.send('-1');
+    return;
+  }
+  db.query('select uid from user_list where uname = ?', req.body.user, 0, function (result, fields) {
+    if (result.length == 0) res.send('1');
+    else res.send('0');
+  });
+  /*if (req.body.user == "") res.send('-1');
   else {
     let isExisted = null;
     condb.userIsExisted(dbclient, req.body.user, function (isExisted) {
@@ -117,15 +182,16 @@ router.post('/chuser', function (req, res) {
       else res.send('0');
       //
     });
-  }
+  }*/
 });
-
+/* 使用memadd goto->580
 router.post('/regtest', function (req, res) {
-  let list = {
-    name: req.body.user,
-    password: req.body.pwd
+  let pd = {
+    uname: req.body.user,
+    passwd: req.body.pwd
   };
-  //condb.query('select count(uid) from test_user', function())
+*/
+/*condb.query('select count(uid) from test_user', function())
   condb.getLastUid(dbclient, function (lastuid) {
     condb.insertFun(dbclient, lastuid[0].count + 1, list.name, list.password, function (err) {
       if (err) {
@@ -135,7 +201,7 @@ router.post('/regtest', function (req, res) {
     });
 
   });
-});
+});*/
 
 
 router.get('/home', function (req, res, next) {
@@ -204,9 +270,9 @@ router.get('/preview', function (req, res, next) {
 });
 
 router.get('/homejs', function (req, res, next) {
-  if (req.session.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+  if (req.cookies.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
-    let un = req.session.uname;
+    let un = req.cookies.uname;
     console.log("用户 " + un + " 已登录");
     res.render('home', {
       username: un
@@ -215,7 +281,7 @@ router.get('/homejs', function (req, res, next) {
 });
 
 router.get('/welcome', function (req, res, next) {
-  if (req.cookies.aname) {
+  if (req.cookies.aid) {
     db.query('select count(uid) as c from user_list', [], 1, function (cuid, fields) {
       db.query('select count(cid) as c from comm_list', [], 1, function (ccid, fields) {
         db.query('select count(aid) as c from admin_list', [], 1, function (caid, fields) {
@@ -247,9 +313,22 @@ router.get('/welcome', function (req, res, next) {
         });
       });
     });
-  } else {
-    res.redirect('/bslogin');
+  } else if(req.cookies.sid) {
+    db.query('select count(cid) as c from comm_list where csid=?', req.cookies.sid, 2, function (ccid, fields) {
+      db.query('select count(oid) as c from order_list where ocid = (select cid from comm_list where csid=?)',req.cookies.sid, 2, function (coid, fields) {
+        db.query('select count(pid) as c from pic_list where pcid = (select cid from comm_list where csid=2);',req.cookies.sid, 2, function (cpid, fields) {
+          res.render('wsell', {
+            username: req.cookies.sname,
+            cnum: ccid[0].c,
+            onum: coid[0].c,
+            pnum: cpid[0].c
+          });
+        });
+      });
+    });
   }
+    else res.redirect('/bslogin');
+  
   //console.log("用户 " + req.session.userName + " 已登录");
   //db.query('select count(uid) from user_list', [], 0, function (result, fields) {
   //console.log(result);
@@ -263,18 +342,19 @@ router.get('/captcha', function (req, res, next) {
 });
 
 router.get('/bsindex', function (req, res, next) {
-  //if (req.session.userName) {
-  //console.log("用户 " + req.session.userName + " 已登录");
-  res.sendFile(path.join(__dirname, '../pages/bsindex.html'));
-  //}
-  //else res.redirect('/login');
+  if (req.cookies.aid) {
+    //console.log("用户 " + req.session.userName + " 已登录");
+    res.sendFile(path.join(__dirname, '../pages/bsindex.html'));
+  } else if (req.cookies.sid) {
+    res.sendFile(path.join(__dirname, '../pages/bsell.html'));
+  } else res.redirect('/bslogin');
 });
 
 router.get('/bslogin', function (req, res, next) {
-  console.log(req.session.id);
-  if (req.session.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+  //console.log(req.session.id);
+  if (req.cookies.aid || req.cookies.sid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
-    console.log("用户 " + req.session.uid + " 已登录");
+    console.log("用户 " + req.cookies.aid || req.cookies.sid + " 已登录");
     if (req.query.from) res.redirect(req.query.from);
     else res.redirect('/bsindex');
   } else res.sendfile(path.join(__dirname, '../pages/bslogin.html'));
@@ -458,7 +538,7 @@ router.post('/renpic', function (req, res) {
     field: req.body.pfield,
     value: req.body.pvalue
   };
-  
+
   db.query('select purl from pic_list where pid=?', pd.pid, 1, function (purl, fields) {
     db.query('update pic_list set ' + pd.field + '=? where pid=?', [pd.value, pd.pid], 1, function (err, results, fields) {
       if (err) res.send('0');
@@ -472,7 +552,7 @@ router.post('/renpic', function (req, res) {
             let oname = purl[0].purl.split('/')[1];
             db.query('update pic_list set pname=? where pid = ?', [oname, pd.pid], function (e, resu) {
               if (e) console.log(e.toString());
-              res.send('0');
+              res.send('2');
               return;
             });
           }
@@ -495,19 +575,17 @@ router.post('/delpic', function (req, res) {
   db.query('select purl from pic_list where pid=?', req.body.pid, 1, function (purl, fields) {
     try {
       fs.unlinkSync(path.join(__dirname, '../public/' + purl[0].purl));
-    }
-    catch(er){
+    } catch (er) {
       console.log('操作文件失败' + er.toString());
       res.send('0');
       return;
     }
     db.query('delete from pic_list where pid=?', req.body.pid, 1, function (err, results, fields) {
       if (err) res.send('2');
-       else res.send('1');
+      else res.send('1');
     });
   });
 });
-
 router.post('/delsel', function (req, res) {
   db.query('delete from seller_list where sid=?', req.body.sid, 1, function (err, results, fields) {
     if (err) res.send('0');
@@ -522,28 +600,53 @@ router.post('/delcomm', function (req, res) {
   });
 });
 
+router.post('/delord', function (req, res) {
+  db.query('delete from order_list where oid=?', req.body.oid, 1, function (err, results, fields) {
+    if (err) res.send('0');
+    else res.send('1');
+  });
+});
+
 router.get('/chmypas', function (req, res) {
+  let idtype;
+  if (req.cookies.aid) idtype = 'aid';
+  else if (req.cookies.sid) idtype = 'sid';
+  else res.redirect('/bslogin');
   res.render('changepas', {
-    id: req.query.id,
-    ident: req.query.ident
+    idtype: idtype,
+    id: req.cookies.aid || req.cookies.sid
   });
 });
 
 router.post('/changepass', function (req, res) {
+  console.log(req.body.aid || req.body.sid);
   let adp = {
-    id: req.body.id,
-    ident: req.body.ident,
+    id: req.body.aid || req.body.sid,
     op: req.body.oldpass,
     np: req.body.newpass,
   };
-  db.query('select upasswd from user_list where uid=?', adp.uid, function (results, fields) {
-    if (results.upasswd == adp.op) {
-      db.query('update user_list set upasswd=? where uid=?', [adp.np, adp.uid], 1, function (err, results, fields) {
-        if (err) res.send('0');
-        else res.send('1');
-      });
-    }
-  });
+  console.log(adp);
+  if (req.body.aid) {
+    db.query('select aname from admin_list where aid=? and apasswd=sha1(?)', [adp.id, adp.op], 1, function (results, fields) {
+      if (results.length != 0) {
+        db.query('update admin_list set apasswd=? where aid=?', [adp.np, adp.id], 1, function (err, result, fields) {
+          if (err) res.send('0');
+          else res.send('1');
+        });
+      }
+    });
+  } else if (req.body.sid) {
+    db.query('select sname from seller_list where sid=? and spasswd=sha1(?)', [adp.id, adp.op], 2, function (results, fields) {
+      if (results.length != 0) {
+        db.query('update seller_list set spasswd=? where sid=?', [adp.np, adp.id], 1, function (err, result, fields) {
+          if (err) res.send('0');
+          else res.send('1');
+        });
+      }
+    });
+  } else res.send('0');
+
+
 });
 
 
@@ -557,6 +660,22 @@ router.post('/memadd', function (req, res) {
     let newuid = parseInt(curruid[0].count);
     newuid += 1;
     db.query('insert into user_list values(?,?,?,?)', [newuid, pd.name, pd.pass, pd.phone], 1, function (err, results, fields) {
+      if (err) res.send('0');
+      else res.send('1');
+    });
+  });
+});
+
+router.post('/selladd', function (req, res) {
+  let pd = {
+    name: req.body.username,
+    pass: req.body.pass,
+    phone: req.body.phone
+  };
+  db.query('select count(sid) as count from seller_list', [], 1, function (currsid, fields) {
+    let newsid = parseInt(currsid[0].count);
+    newsid += 1;
+    db.query('insert into seller_list values(?,?,?,?)', [newsid, pd.name, pd.pass, pd.phone], 1, function (err, results, fields) {
       if (err) res.send('0');
       else res.send('1');
     });
@@ -594,27 +713,29 @@ router.get('/checkimg', function (req, res, next) {
 });
 
 router.post('/buy', function (req, res) {
+  if (req.cookies.uid === undefined) {
+    res.redirect('/login?from=/preview?cid=' + req.body.cid);
+    return;
+  }
   let pd = {
     cid: req.body.cid,
     num: req.body.num,
-    uid: req.session.uid
+    uid: req.cookies.uid
   };
   console.log(pd);
-  if (pd.uid === undefined) res.redirect('/login?from=/preview?cid=' + pd.cid);
-  else {
-    db.query('select count(oid) as count from order_list', [], 3, function (curroid, fields) {
-      let newoid = parseInt(curroid[0].count);
-      newoid += 1;
-      console.log('新订单号oid: ' + newoid);
-      db.query('select cprice from comm_list where cid = ?', pd.cid, 3, function (cprice, fields) {
-        let price = parseFloat(cprice[0].cprice) * parseInt(pd.num);
-        db.query('insert into order_list values(?,?,?,?,?)', [newoid, pd.cid, pd.num, price, pd.uid], 3, function (err, results, fields) {
-          if (err) res.send('0');
-          else res.send('1');
-        });
+  db.query('select count(oid) as count from order_list', [], 3, function (curroid, fields) {
+    let newoid = parseInt(curroid[0].count);
+    newoid += 1;
+    console.log('新订单号oid: ' + newoid);
+    db.query('select cprice from comm_list where cid = ?', pd.cid, 3, function (cprice, fields) {
+      let price = parseFloat(cprice[0].cprice) * parseInt(pd.num);
+      db.query('insert into order_list values(?,?,?,?,?)', [newoid, pd.cid, pd.num, price, pd.uid], 3, function (err, results, fields) {
+        if (err) res.send('0');
+        else res.send('1');
       });
     });
-  }
+  });
+
 
 });
 

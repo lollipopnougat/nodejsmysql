@@ -34,26 +34,7 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">
-                            <!--
-                            <div class="layui-inline layui-show-xs-block">
-                                
-                                <input class="layui-input" autocomplete="off" placeholder="开始日" name="start" id="start">
-                            </div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input" autocomplete="off" placeholder="截止日" name="end" id="end">
-                            </div>-->
-                            <div class="layui-inline layui-show-xs-block">
-                                <input type="text" name="username" placeholder="请输入用户名" autocomplete="off"
-                                    class="layui-input">
-                            </div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
-                                    <i class="layui-icon">&#xe615;</i></button>
-                            </div>
-                        </form>
-                    </div>
+                    <hr class="hr20">
                     <div class="layui-card-body ">
                         <table class="layui-table"
                             lay-data="{url:'/memlst',page:true,toolbar: '#toolbarDemo',id:'test'}" lay-filter="test">
@@ -63,13 +44,7 @@
                                     <th lay-data="{field:'uid', width:80, sort: true}">ID</th>
                                     <th lay-data="{field:'uname', width:120, sort: true, edit: 'text'}">用户名</th>
                                     <th lay-data="{field:'uphone', edit: 'text', width: 150}">电话</th>
-                                    <th lay-data="{field:'upasswd', edit: 'text', minWidth: 100}">密码(SHA1)</th>
-                                    <!--
-                                    <th lay-data="{field:'sex', width:80,templet: '#switchTpl'}">性别</th>
-                                    <th lay-data="{field:'city', edit: 'text', minWidth: 100}">城市</th>
-                                    <th lay-data="{field:'experience', sort: true, edit: 'text'}">积分</th>
-                                    <th lay-data="{field:'dw_xinzhi',templet: function(d){ return d.dw_xinzhi.titel;}}">
-                                        学校</th>-->
+                                    <th lay-data="{field:'upasswd', minWidth: 100}">密码(SHA1)</th>
                                 </tr>
                             </thead>
                         </table>
@@ -81,10 +56,6 @@
 </body>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-        <!--
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData"> 获取选中行数据 </button>
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll"> 验证是否全选</button>-->
         <button class="layui-btn layui-btn-danger" onclick="del()"><i class="layui-icon"></i>批量删除</button>
         <button class="layui-btn" onclick="xadmin.open('添加用户','/memadd',600,400)"><i class="layui-icon"></i>添加</button>
     </div>
@@ -109,7 +80,6 @@
         laydate.render({
             elem: '#end' //指定元素
         });
-
         del = function delAll(argument) {
             var ids = [];
 
@@ -184,22 +154,7 @@
             });
 
         //头工具栏事件
-        table.on('toolbar(test)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            switch (obj.event) {
-                case 'getCheckData':
-                    var data = checkStatus.data;
-                    layer.alert(JSON.stringify(data));
-                    break;
-                case 'getCheckLength':
-                    var data = checkStatus.data;
-                    layer.msg('选中了：' + data.length + ' 个');
-                    break;
-                case 'isAll':
-                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
-                    break;
-            };
-        });
+        
     });
 </script>
 

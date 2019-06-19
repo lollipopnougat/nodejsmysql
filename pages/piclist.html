@@ -34,17 +34,7 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">
-                            <div class="layui-inline layui-show-xs-block">
-                                <input type="text" name="username" placeholder="请输入图片名" autocomplete="off"
-                                    class="layui-input"></div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
-                                    <i class="layui-icon">&#xe615;</i></button>
-                            </div>
-                        </form>
-                    </div>
+                    <hr class="hr20">
                     <div class="layui-card-body ">
                         <table class="layui-table"
                             lay-data="{url:'/piclst',page:true,toolbar: '#toolbarDemo',id:'test'}" lay-filter="test">
@@ -68,7 +58,8 @@
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="getCheckData"> 查看选中图片 </button>
         <button class="layui-btn layui-btn-danger" onclick="del()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="xadmin.open('添加图片','/uploadi',600,400)"><i class="layui-icon"></i>添加</button>
+        <button class="layui-btn" onclick="xadmin.open('添加图片','/uploadi',600,400)"><i
+                class="layui-icon"></i>添加</button>
     </div>
 </script>
 <!--
@@ -162,6 +153,8 @@
                             }, function () {
                                 window.location.reload();
                             });
+                        } else if (msg == '2') {
+                            layer.msg('图片文件不能重命名，请联系网站管理员');
                         } else {
                             layer.msg('修改失败');
                         }

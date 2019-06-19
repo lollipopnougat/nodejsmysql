@@ -164,7 +164,7 @@ body {
 }
    /**** End Cart ****/
 .header_bottom {
-	background: #f76606;
+	background: #383838;
 	border-radius: 6px;
 	-webkit-border-radius: 6px;
 	-moz-border-rfadius: 6px;
@@ -183,7 +183,7 @@ body {
 	color: #fff;
 	display:block;
 	padding:16px 20px;
-	border-right: 2px ridge #ffffff;
+	border-right: 2px ridge #585858;
     -webkit-transition: all .9s;
    -moz-transition: all .9s;
    -o-transition: all .9s;
@@ -191,7 +191,7 @@ body {
    transition: all .9s;
 }
 .menu li a:hover,.menu li.active a{
-	background:#db0000;
+	background:#B81D22;
 }
 .menu li:first-child  a{
 	border-radius:6px 0 0 6px;
@@ -201,7 +201,7 @@ body {
 }
 .search_box {
 	float: right;
-	border: 1px solid #fff;
+	border: 1px solid #3C3C3C;
 	background: #FFF;
 	border-radius: 0.3em;
 	-webkit-border-radius: 0.3em;
@@ -244,7 +244,7 @@ body {
 	font-size:1.2em;
 	color:#FFF;
 	padding:10px;
-	background:#db0000;
+	background:#B81D22;
 	text-transform:uppercase;
 	font-family: 'ambleregular';	
 }
@@ -379,7 +379,7 @@ body {
 	display: block;
 	padding:10px 15px;
 	font-family: 'ambleregular';
-	background:#db0000;
+	background:#CD1F25;
 	color: #FFF;
 	text-decoration: none;
 	outline: 0;
@@ -1084,17 +1084,17 @@ body {
 	margin:0px;
 }
 #posts .tab.selected .post-title{
-	color:#f76606;
+	color:#222;
 }
 #posts .panel .post-text{
 	clear:both;
 	padding:10px;
 }
 .panel{
-	background:#f76606;
+	background:#222;
 }
 .panel p{
-	color:#000;
+	color:#C0C0C0;
 	font-size:0.95em;
 	line-height: 1.8em;
 	padding:5px 20px;

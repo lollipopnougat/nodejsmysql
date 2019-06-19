@@ -22,7 +22,7 @@
 
 <body class="login-bg">
   <div class="wrapper">
-    <div class="web-bg blur" style="background-image: url(./images/gg.png);"></div>
+    <div class="web-bg blur" id="bgbg" style="background-image: url(./images/gg.png);"></div>
     <div class="login layui-anim layui-anim-up opacity">
       <div class="message">后台管理登录</div>
       <div id="darkbannerwrap"></div>
@@ -32,8 +32,20 @@
         <hr class="hr15">
         <input name="password" lay-verify="required" placeholder="密码" type="password" class="layui-input">
         <hr class="hr15">
+        <div class="layui-input-block">
+          <input type="radio" name="type" value="a" title="管理员" checked="">
+          <div class="layui-unselect layui-form-radio layui-form-radioed"><i
+              class="layui-anim layui-icon layui-anim-scaleSpring"></i>
+            <div>管理员</div>
+          </div>
+          <input type="radio" name="type" value="s" title="商家" >
+          <div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i>
+            <div>买家</div>
+          </div>
+        </div>
+        <hr class="hr15">
         <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
-        <hr class="hr20">
+        <hr class="hr15">
       </form>
     </div>
   </div>
@@ -61,6 +73,8 @@
         return false;
       });
     });
+
+    //setInterval("$('#bgbg').attr('src','')", 5000);
     //});
   </script>
   <!-- 底部结束 -->

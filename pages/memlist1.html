@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>商品列表</title>
+    <title>用户列表</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -22,9 +22,8 @@
     <div class="x-nav">
         <span class="layui-breadcrumb">
             <a href="/bsindex">商城后台管理</a>
-            <a>商品管理</a>
-            <a>
-                <cite>商品信息修改</cite></a>
+            <a>用户管理</a>
+            <a><cite>用户列表</cite></a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
             onclick="location.reload()" title="刷新">
@@ -37,28 +36,34 @@
                 <div class="layui-card">
                     <div class="layui-card-body ">
                         <form class="layui-form layui-col-space5">
+                            <!--
                             <div class="layui-inline layui-show-xs-block">
-                                <input type="text" name="username" placeholder="请输入商品名" autocomplete="off"
-                                    class="layui-input"></div>
+                                
+                                <input class="layui-input" autocomplete="off" placeholder="开始日" name="start" id="start">
+                            </div>
                             <div class="layui-inline layui-show-xs-block">
-                                <button class="layui-btn" lay-submit lay-filter="sreach">
+                                <input class="layui-input" autocomplete="off" placeholder="截止日" name="end" id="end">
+                            </div>-->
+                            <div class="layui-inline layui-show-xs-block">
+                                <input type="text" name="username" placeholder="请输入用户名" autocomplete="off"
+                                    class="layui-input">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
                                     <i class="layui-icon">&#xe615;</i></button>
                             </div>
                         </form>
                     </div>
                     <div class="layui-card-body ">
                         <table class="layui-table"
-                            lay-data="{url:'/commlst',page:true,toolbar: '#toolbarDemo',id:'test'}" lay-filter="test">
+                            lay-data="{url:'/memlst',page:true,toolbar: '#toolbarDemo',id:'test'}" lay-filter="test">
                             <thead>
                                 <tr>
-                                    <th lay-data="{type:'checkbox'}">CID</th>
-                                    <th lay-data="{field:'cid', width:80, sort: true}">CID</th>
-                                    <th lay-data="{field:'cname', minWidth:80, sort: true, edit: 'text'}">商品名称</th>
-                                    <th lay-data="{field:'cprice', sort: true, edit: 'text', width: 80}">价格</th>
-                                    <th lay-data="{field:'cnum', sort: true, edit: 'text', width: 80}">数量</th>
-                                    <th lay-data="{field:'ctype', sort: true, edit: 'text', width: 80}">分类</th>
-                                    <th lay-data="{field:'csid', sort: true, edit: 'text', width: 100}">发布者ID</th>
-                                    <th lay-data="{field:'cdesc', edit: 'text', minWidth: 150}">描述</th>
+                                    <th lay-data="{type:'checkbox'}">ID</th>
+                                    <th lay-data="{field:'uid', width:80, sort: true}">ID</th>
+                                    <th lay-data="{field:'uname', width:120, sort: true, edit: 'text'}">用户名</th>
+                                    <th lay-data="{field:'uphone', edit: 'text', width: 150}">电话</th>
+                                    <th lay-data="{field:'upasswd', edit: 'text', minWidth: 100}">密码(SHA1)</th>
                                     <!--
                                     <th lay-data="{field:'sex', width:80,templet: '#switchTpl'}">性别</th>
                                     <th lay-data="{field:'city', edit: 'text', minWidth: 100}">城市</th>
@@ -76,16 +81,25 @@
 </body>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
+        <!--
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData"> 获取选中行数据 </button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll"> 验证是否全选</button>-->
         <button class="layui-btn layui-btn-danger" onclick="del()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="xadmin.open('添加商品','/commadd',600,450)"><i
-                class="layui-icon"></i>添加</button>
+        <button class="layui-btn" onclick="xadmin.open('添加用户','/memadd',600,400)"><i class="layui-icon"></i>添加</button>
     </div>
 </script>
-
+<!--
+<script type="text/html" id="switchTpl">
+     这里的checked的状态只是演示 
+<input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="女|男" lay-filter="sexDemo"
+    {{ d.id == 10003 ? 'checked': ''}}>
+</script>
+-->
 <script>
-    layui.use(['laydate', 'form', 'table'], function () {
+    layui.use(['laydate', 'form', 'jquery'], function () {
         var laydate = layui.laydate;
-        var table = layui.table;
+        var $ = layui.jquery;
         //执行一个laydate实例
         laydate.render({
             elem: '#start' //指定元素
@@ -96,24 +110,23 @@
             elem: '#end' //指定元素
         });
 
-        del = function delAll() {
+        del = function delAll(argument) {
             var ids = [];
 
             // 获取选中的id 
             $('tbody input').each(function (index, el) {
                 if ($(this).prop('checked')) {
-                    ids.push($(this));
-                    console.log($(this));
+                    ids.push($(this))
                 }
             });
 
-            layer.confirm('确认要删除所有选中项吗？', function () {
+            layer.confirm('确认要删除选中的项吗？', function () {
                 //捉到所有被选中的，发异步进行删除
                 ids.forEach(element => {
                     $.ajax({
-                        url: '/delcomm',
+                        url: '/delmem',
                         data: {
-                            cid: element.parents().parents().next().children()[0]
+                            uid: element.parents().parents().next().children()[0]
                                 .innerText
                         },
                         dataType: 'text',
@@ -125,7 +138,6 @@
                                 });
                                 $(".layui-form-checked").not('.header').parents(
                                     'tr').remove();
-                                window.location.reload();
                             } else {
                                 layer.msg('删除失败');
                             }
@@ -133,7 +145,6 @@
                     });
                 });
             });
-
         }
     });
 </script>
@@ -143,32 +154,51 @@
         var table = layui.table;
 
         //监听单元格编辑
-        table.on('edit(test)', function (obj) {
-            var value = obj.value //得到修改后的值
-                ,
-                data = obj.data //得到所在行所有键值
-                ,
-                field = obj.field; //得到字段
-            layer.msg('[ID: ' + data.cid + '] ' + field + ' 字段更改为：' + value);
-            $.ajax({
-                url: '/changecomm',
-                data: {
-                    pcid: data.cid,
-                    pfield: field,
-                    pvalue: value
-                },
-                dataType: 'text',
-                type: 'post',
-                success: function (msg) {
-                    if (msg == '1') {
-                        layer.alert("修改成功", {
-                            icon: 6
-                        });
-                    } else {
-                        layer.msg('修改失败');
+        table.on('edit(test)',
+            function (obj) {
+                var value = obj.value //得到修改后的值
+                    ,
+                    data = obj.data //得到所在行所有键值
+                    ,
+                    field = obj.field; //得到字段
+                layer.msg('[ID: ' + data.uid + '] ' + field + ' 字段更改为：' + value);
+                $.ajax({
+                    url: '/changemem',
+                    data: {
+                        puid: data.uid,
+                        pfield: field,
+                        pvalue: value
+                    },
+                    dataType: 'text',
+                    type: 'post',
+                    success: function (msg) {
+                        if (msg == '1') {
+                            layer.alert("修改成功", {
+                                icon: 6
+                            });
+                        } else {
+                            layer.msg('修改失败');
+                        }
                     }
-                }
+                });
             });
+
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+            };
         });
     });
 </script>

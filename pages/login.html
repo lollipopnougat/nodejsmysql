@@ -59,7 +59,7 @@
 
             form.on('submit(login)', function (data) {
                 // console.log(data.field);
-                let captcha = document.cookie.split('=')[1]
+                /*let captcha = document.cookie.split('=')[1]
                 if ($('#captcha').val().toLowerCase() != captcha) {
                     layer.msg('验证码错误', function () {
                        //window.location.reload(); 
@@ -67,21 +67,23 @@
                     });
                     //$('#captcha').css('border-bottom', '3px solid #FF5722');
                     
-                } else {
-                    $.ajax({
-                        url: '/logintest',
-                        data: data.field,
-                        dataType: 'text',
-                        type: 'post',
-                        success: function (data) {
-                            if (data == '1') {
-                                location.href = "/homejs";
-                            } else {
-                                layer.msg('登录名或密码错误');
-                            }
+                } else { */
+                $.ajax({
+                    url: '/logintest',
+                    data: data.field,
+                    dataType: 'text',
+                    type: 'post',
+                    success: function (data) {
+                        if (data == '1') {
+                            location.href = "/homejs";
+                        } else if(data == '2') {
+                            layer.msg('验证码错误');
+                        } else {
+                            layer.msg('登录名或密码错误');
                         }
-                    });
-                }
+                    }
+                });
+                //}
 
 
                 return false;

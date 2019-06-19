@@ -4,6 +4,9 @@
 * @Last Modified by:   zhibinm
 * @Last Modified time: 2019-04-01 13:37:19
 */
+
+
+
 .login-bg {
     /*background: #eeeeee url() 0 0 no-repeat;*/
     background-image: url(../images/bg.png) no-repeat center !important;
@@ -114,7 +117,7 @@ select:focus {
     padding: 0px;
     width: 100%;
 }
-
+/* edit by lnp 2019.6.19 */
 .web-bg {
     position: fixed;
     top: 0;

@@ -24,22 +24,16 @@
         <div class="layui-row">
             <form class="layui-form">
                 <div class="layui-form-item">
-                    <label for="L_username" class="layui-form-label">ID</label>
+                    <label for="L_username" class="layui-form-label"><%= idtype %></label>
                     <div class="layui-input-inline">
-                        <input type="text" id="L_username" name="id" value="<%= id %>" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="L_username" class="layui-form-label">ID</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="L_username" name="ident" value="<%= ident %>" class="layui-input">
+                        <input type="text" id="L_username" required="" name="<%= idtype %>" value="<%= id %>" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="L_repass" class="layui-form-label">
                         <span class="x-red">*</span>旧密码</label>
                     <div class="layui-input-inline">
-                        <input type="password" id="L_repass" name="oldpass" required="" lay-verify="required"
+                        <input type="password" id="L_opass" name="oldpass" required="" lay-verify="required"
                             autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">

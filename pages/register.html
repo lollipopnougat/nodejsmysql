@@ -24,14 +24,21 @@
       <div class="layui-input-inline">
         <!-- 用户名 -->
         <div class="layui-inline" style="width: 100%">
-          <input type="text" id="user" name="account" required lay-verify="required" placeholder="请输入用户名"
+          <input type="text" id="user" name="username" required lay-verify="required" placeholder="请输入用户名"
+            autocomplete="off" class="layui-input" />
+        </div>
+      </div>
+      <div class="layui-input-inline">
+        <!-- 电话 -->
+        <div class="layui-inline" style="width: 100%">
+          <input type="text" id="phone" name="phone" required lay-verify="required" placeholder="请输入电话"
             autocomplete="off" class="layui-input" />
         </div>
       </div>
       <!-- 密码 -->
       <div class="layui-input-inline">
         <div class="layui-inline" style="width: 100%">
-          <input type="password" id="pwd" name="password" required lay-verify="required" placeholder="请输入密码"
+          <input type="password" id="pwd" name="pass" required lay-verify="required" placeholder="请输入密码"
             autocomplete="off" class="layui-input" />
         </div>
       </div>
@@ -95,6 +102,20 @@
 
       });
 
+      $('#phone').blur(function () {
+        var reg = /^\d{11}$/;
+        if (!($('#phone').val().match(reg))) {
+          layer.msg('请输入合法电话');
+          //$('#pwr').removeAttr('hidden');
+          //$('#pri').attr('hidden', 'hidden');
+          $('#phone').css('border-bottom', '3px solid #FF5722');
+          //layer.msg('密码4-12位');
+        } else {
+          //$('#pri').removeAttr('hidden');
+          //$('#pwr').attr('hidden', 'hidden');
+          $('#phone').css('border-bottom', '3px solid #009688');
+        }
+      });
       // you code ...
       // 为密码添加正则验证
       $('#pwd').blur(function () {
@@ -130,14 +151,10 @@
       //添加表单监听事件,提交注册信息
       form.on('submit(sub)', function (data) {
         $.ajax({
-          url: '/regtest',
+          url: '/memadd',
           data: data.field,
           dataType: 'text',
           type: 'post',
-          data: {
-            user: $('#user').val(),
-            pwd: $('#pwd').val(),
-          },
           success: function (data) {
             if (data == '1') {
               layer.msg('注册成功');

@@ -46,7 +46,8 @@ router.post('/', loadfile.array('file', 10), function (req, res, next) {
           }
           
           db.query('insert into pic_list(pname, purl, pcid) values(?,?,?)', [orn, purl, pcid], 1, function (err, result) {
-            if (err) console.log(err.toString()); 
+            if (err) console.log(err.toString());
+            else console.log('purl = ' + purl + ' 存入数据库') ;
           });
            
           //获取文件基本信息
