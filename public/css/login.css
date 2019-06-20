@@ -128,11 +128,18 @@ select:focus {
     z-index: -10;
     zoom: 1;
     background-color: #fff;
+    background-image: url(../images/ggg.png);
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;
     -o-background-size: cover;
     background-position: center 0;
+    transition:all 2s;
+}
+
+.web-bg:hover{
+    width: 150%;
+    height: 150%;
 }
 
 .blur {

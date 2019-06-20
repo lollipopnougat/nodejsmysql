@@ -842,6 +842,9 @@ router.post('/buy', function (req, res) {
     uid: req.cookies.uid
   };
   console.log(pd);
+  db.query('select cnum from comm_list where cid = ?', pd.cid, 3, function (cnum,fields){
+    if(cnum[0].cnum < pd.num) res.send('2');
+  });
   db.query('select count(oid) as count from order_list', [], 3, function (curroid, fields) {
     let newoid = parseInt(curroid[0].count);
     newoid += 1;

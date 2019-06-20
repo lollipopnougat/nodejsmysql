@@ -22,7 +22,7 @@
 
 <body class="login-bg">
   <div class="wrapper">
-    <div class="web-bg blur" id="bgbg" style="background-image: url(./images/gg.png);"></div>
+    <div class="web-bg blur" id="bgbg"></div>
     <div class="login layui-anim layui-anim-up opacity">
       <div class="message">后台管理登录</div>
       <div id="darkbannerwrap"></div>
@@ -38,7 +38,7 @@
               class="layui-anim layui-icon layui-anim-scaleSpring"></i>
             <div>管理员</div>
           </div>
-          <input type="radio" name="type" value="s" title="商家" >
+          <input type="radio" name="type" value="s" title="商家">
           <div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i>
             <div>买家</div>
           </div>
@@ -70,11 +70,14 @@
         /*layer.msg(JSON.stringify(data.field),function(){
             location.href='index.html'
         });*/
+
+        //window.setInterval("$('bgbg').css({'width':'150%','width':'150%'})",5000);
         return false;
       });
+
     });
 
-    //setInterval("$('#bgbg').attr('src','')", 5000);
+    //setInterval("document.getElementById('bgbg').style.hight = '110%';document.getElementById('bgbg').style.hight = '100%';", 5000);
     //});
   </script>
   <!-- 底部结束 -->
