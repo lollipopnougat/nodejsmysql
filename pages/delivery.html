@@ -31,9 +31,9 @@
 				</div>
 				<div class="account_desc">
 					<ul>
-						<li><a href="/registe">注册</a></li>
-						<li><a href="/login">登录</a></li>
-						<li><a href="/delivery">快递</a></li>
+						<li><a href="#">注册</a></li>
+						<li><a href="#">登录</a></li>
+						<li><a href="#">快递</a></li>
 						<li><a href="#">支付</a></li>
 						<li><a href="#">我的账户</a></li>
 					</ul>
@@ -93,37 +93,29 @@
 					</ul>
 				</div>
 				<div class="layui-fluid">
-					<form class="layui-form">
-						<div class="layui-input-inline">
-							<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
-								autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
-						</div>
-						<button class="layui-btn layui-bg-orange" lay-submit="" lay-filter="search"
-							style="margin: 4px 4px 5px 5px;">立即搜索</button>
-					</form>
-				</div>
-				<script>
-					layui.use(['form', 'jquery'], function () {
-						var form = layui.form;
-						var $ = layui.jquery;
-						form.on('submit(search)', function (data) {
-							$.ajax({
-								url: '/search',
-								data: data.field,
-								dataType: 'text',
-								type: 'post',
-								success: function (msg) {
-									if (msg !== undefined) location.href = msg;
-									else alert('搜索错误！');
-									return false;
-								}
+						<form class="layui-form" style="float:right;">
+							<div class="layui-input-inline">
+								<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
+									autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
+							</div>
+							<button class="layui-btn layui-bg-orange" lay-submit="" lay-filter="search"
+								style="margin: 4px 4px 5px 5px;">立即搜索</button>
+						</form>
+					</div>
+					<script>
+						layui.use(['form', 'jquery'], function () {
+							var form = layui.form;
+							var $ = layui.jquery;
+							form.on('submit(search)', function (data) {
+								location.href = '/search?cname=' + data.field.search;
+								return false;
 							});
-							return false;
 						});
-					});
-				</script>
+					</script>
+				<div class="clear"></div>
 			</div>
 		</div>
+		
 		<div class="main">
 			<div class="content">
 				<div class="section group">

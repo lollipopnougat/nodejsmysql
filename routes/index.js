@@ -54,11 +54,11 @@ router.post('/blogin', function (req, res) {
         if (req.cookies.sid) res.clearCookie('sid');
         if (req.cookies.sname) res.clearCookie('sname');
         res.cookie('aname', pd.name, {
-          maxAge: 1000 * 60 * 10,
+          maxAge: 1000 * 60 * 20,
           httpOnly: true
         });
         res.cookie('aid', result[0].aid, {
-          maxAge: 1000 * 60 * 10,
+          maxAge: 1000 * 60 * 20,
           httpOnly: true
         });
         res.send('1');
@@ -74,11 +74,11 @@ router.post('/blogin', function (req, res) {
         if (req.cookies.aid) res.clearCookie('aid');
         if (req.cookies.aname) res.clearCookie('aname');
         res.cookie('sname', pd.name, {
-          maxAge: 1000 * 60 * 10,
+          maxAge: 1000 * 60 * 20,
           httpOnly: true
         });
         res.cookie('sid', result[0].sid, {
-          maxAge: 1000 * 60 * 10,
+          maxAge: 1000 * 60 * 20,
           httpOnly: true
         });
         res.send('1');
@@ -227,6 +227,12 @@ router.get('/contact', function (req, res, next) {
 });
 
 router.get('/preview', function (req, res, next) {
+  let uname = 'none';
+  let uid = 'none';
+  if (req.cookies.uid) {
+    uname = req.cookies.uname;
+    uid = req.cookies.uid
+  }
   db.query('select * from comm_list where cid=?', req.query.cid, 0, function (judgecomm, fields) {
     if (judgecomm.length == 0) res.sendFile(path.join(__dirname, '../pages/error.html'));
     else {
@@ -241,9 +247,11 @@ router.get('/preview', function (req, res, next) {
           }
         }
         console.log('暂存数组: ' + p);
-        db.query('select cname,cdesc,cprice,cnum,ctype from comm_list where cid=?', req.query.cid, 0, function (results, fields) {
+        db.query('select cname,cdesc,cprice,cnum,ctype,sphone from comm_list,seller_list where sid = csid and cid=?', req.query.cid, 0, function (results, fields) {
           res.render('preview', {
             title: results[0].cname + '商品页',
+            uid: uid,
+            uname: uname,
             curcategory: results[0].ctype,
             productslide1: p[0],
             productslide2: p[1],
@@ -261,7 +269,8 @@ router.get('/preview', function (req, res, next) {
             csdesc: results[0].ctype,
             cprice: results[0].cprice,
             cdesc: results[0].cdesc,
-            cnum: results[0].cnum
+            cnum: results[0].cnum,
+            sphone: results[0].sphone
           });
         });
       });
@@ -313,10 +322,10 @@ router.get('/welcome', function (req, res, next) {
         });
       });
     });
-  } else if(req.cookies.sid) {
+  } else if (req.cookies.sid) {
     db.query('select count(cid) as c from comm_list where csid=?', req.cookies.sid, 2, function (ccid, fields) {
-      db.query('select count(oid) as c from order_list where ocid = (select cid from comm_list where csid=?)',req.cookies.sid, 2, function (coid, fields) {
-        db.query('select count(pid) as c from pic_list where pcid = (select cid from comm_list where csid=2);',req.cookies.sid, 2, function (cpid, fields) {
+      db.query('select count(oid) as c from order_list where ocid = (select cid from comm_list where csid=?)', req.cookies.sid, 2, function (coid, fields) {
+        db.query('select count(pid) as c from pic_list where pcid = (select cid from comm_list where csid=2);', req.cookies.sid, 2, function (cpid, fields) {
           res.render('wsell', {
             username: req.cookies.sname,
             cnum: ccid[0].c,
@@ -326,9 +335,8 @@ router.get('/welcome', function (req, res, next) {
         });
       });
     });
-  }
-    else res.redirect('/bslogin');
-  
+  } else res.redirect('/bslogin');
+
   //console.log("用户 " + req.session.userName + " 已登录");
   //db.query('select count(uid) from user_list', [], 0, function (result, fields) {
   //console.log(result);
@@ -361,126 +369,237 @@ router.get('/bslogin', function (req, res, next) {
 });
 
 router.get('/piclist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/piclist.html'));
+  if (req.cookies.aid || req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/piclist.html'));
+  else res.redirect('/bslogin');
 });
 
 router.get('/orderlist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+  if (req.cookies.aid || req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+  else res.redirect('/bslogin');
 });
 
 router.get('/memlist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/memlist.html'));
+  if (req.cookies.aid) res.sendFile(path.join(__dirname, '../pages/memlist.html'));
+  else res.redirect('/logout?goto=/bslogin');
 });
 
 router.get('/sellist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/sellerlist.html'));
+  if (req.cookies.aid) res.sendFile(path.join(__dirname, '../pages/sellerlist.html'));
+  else if (req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/sellerlists.html'));
+  else res.redirect('/bslogin');
 });
 
 router.get('/commlist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/commlist.html'));
+  if (req.cookies.aid || req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/commlist.html'));
+  else res.redirect('/bslogin');
 });
 
 router.get('/memadd', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/memadd.html'));
+  if (req.cookies.aid) res.sendFile(path.join(__dirname, '../pages/memadd.html'));
+  else res.redirect('/logout?goto=/bslogin');
 });
 
 router.get('/seladd', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/selladd.html'));
+  if (req.cookies.aid) res.sendFile(path.join(__dirname, '../pages/selladd.html'));
+  else res.redirect('/logout?goto=/bslogin');
 });
 
 router.get('/commadd', function (req, res) {
-  res.sendFile(path.join(__dirname, '../pages/commadd.html'));
+  if (req.cookies.aid) res.sendFile(path.join(__dirname, '../pages/commadd.html'));
+  else if (req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/commadds.html'));
 });
 
 router.get('/orderlist', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+  if (req.cookies.aid || req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/orderlist.html'));
+  else res.redirect('/logout?goto=/bslogin');
 });
 
 router.get('/memlst', function (req, res, next) {
-  let pag = req.query.page;
-  pag -= 1;
-  pag *= 10;
-  db.query('select count(uid) as c from user_list', [], 1, function (uidnum, fields) {
-    db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
-      let sresults = {
-        "code": 0,
-        "msg": "",
-        "count": uidnum[0].c,
-        "data": results
-      };
-      res.json(sresults);
+  if (req.cookies.aid) {
+    let pag = req.query.page;
+    pag -= 1;
+    pag *= 10;
+    db.query('select count(uid) as c from user_list', [], 1, function (uidnum, fields) {
+      db.query('select * from user_list limit ?,10', [pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": uidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
     });
-  });
+  } else {
+    let sresults = {
+      "code": -1,
+      "msg": "请先登录",
+      "count": 0,
+      "data": ""
+    };
+    res.json(sresults);
+  }
 });
 
 router.get('/commlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  db.query('select count(cid) as c from comm_list', [], 1, function (cidnum, fields) {
-    db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
-      let sresults = {
-        "code": 0,
-        "msg": "",
-        "count": cidnum[0].c,
-        "data": results
-      };
-      res.json(sresults);
+  if (req.cookies.aid) {
+    db.query('select count(cid) as c from comm_list', [], 1, function (cidnum, fields) {
+      db.query('select * from comm_list limit ?,10', [pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": cidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
     });
-  });
+  } else if (req.cookies.sid) {
+    db.query('select count(cid) as c from comm_list where csid=?', req.cookies.sid, 2, function (cidnum, fields) {
+      db.query('select * from comm_list where csid=? limit ?,10', [req.cookies.sid, pag], 2, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": cidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
+    });
+  } else {
+    let sresults = {
+      "code": -1,
+      "msg": "请先登录",
+      "count": 0,
+      "data": ""
+    };
+    res.json(sresults);
+  }
+
+
+
 });
 
 router.get('/ordlst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  db.query('select count(oid) as c from order_list', [], 1, function (oidnum, fields) {
-    db.query('select * from order_list limit ?,10', [pag], 1, function (results, fields) {
-      let sresults = {
-        "code": 0,
-        "msg": "",
-        "count": oidnum[0].c,
-        "data": results
-      };
-      res.json(sresults);
+  if (req.cookies.aid) {
+    db.query('select count(oid) as c from order_list', [], 1, function (oidnum, fields) {
+      db.query('select * from order_list limit ?,10', [pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": oidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
     });
-  });
+  } else if (req.cookies.sid) {
+    db.query('select count(oid) as c from order_list where ocid =(select cid from comm_list where csid = ?)', req.cookies.sid, 2, function (oidnum, fields) {
+      db.query('select * from order_list where ocid =(select cid from comm_list where csid = ?) limit ?,10', [req.cookies.sid, pag], 2, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": oidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
+    });
+  } else {
+    let sresults = {
+      "code": -1,
+      "msg": "请先登录",
+      "count": 0,
+      "data": ""
+    };
+    res.json(sresults);
+  }
 });
 
 router.get('/sellst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select count(sid) as c from seller_list', [], 1, function (sidnum, fields) {
-    db.query('select * from seller_list limit ?,10', [pag], 1, function (results, fields) {
+  if (req.cookies.aid) {
+
+
+    //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
+    db.query('select count(sid) as c from seller_list', [], 1, function (sidnum, fields) {
+      db.query('select * from seller_list limit ?,10', [pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": sidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
+    });
+  } else if (req.cookies.sid) {
+    db.query('select * from seller_list where sid=? limit ?,10', [req.cookies.sid, pag], 2, function (results, fields) {
       let sresults = {
         "code": 0,
         "msg": "",
-        "count": sidnum[0].c,
+        "count": 1,
         "data": results
       };
       res.json(sresults);
     });
-  });
+  } else {
+    let sresults = {
+      "code": -1,
+      "msg": "请先登录",
+      "count": 0,
+      "data": ""
+    };
+    res.json(sresults);
+  }
 });
 
 router.get('/piclst', function (req, res, next) {
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
-  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
-  db.query('select count(pid) as c from pic_list', [], 1, function (pidnum, fields) {
-    db.query('select * from pic_list limit ?,10', [pag], 1, function (results, fields) {
-      let sresults = {
-        "code": 0,
-        "msg": "",
-        "count": pidnum[0].c,
-        "data": results
-      };
-      res.json(sresults);
+  if (req.cookies.aid) {
+    db.query('select count(pid) as c from pic_list', [], 1, function (pidnum, fields) {
+      db.query('select * from pic_list limit ?,10', [pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": pidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
     });
-  });
+  } else if (req.cookies.sid) {
+    db.query('select count(pid) as c from pic_list where pcid =(select cid from comm_list where csid=?)', req.cookies.sid, 2, function (pidnum, fields) {
+      db.query('select * from pic_list where pcid =(select cid from comm_list where csid=?) limit ?,10', [req.cookies.sid, pag], 1, function (results, fields) {
+        let sresults = {
+          "code": 0,
+          "msg": "",
+          "count": pidnum[0].c,
+          "data": results
+        };
+        res.json(sresults);
+      });
+    });
+  } else {
+    let sresults = {
+      "code": -1,
+      "msg": "请先登录",
+      "count": 0,
+      "data": ""
+    };
+    res.json(sresults);
+  }
+  //console.log('pag = ' + pag + 'lim = ' + req.query.limit);
 
 });
 
@@ -689,7 +808,7 @@ router.post('/commaddp', function (req, res) {
     desc: req.body.desc,
     num: req.body.cnum,
     ctype: req.body.ctype,
-    csid: req.body.seller
+    csid: req.body.seller || req.cookies.sid
   };
   db.query('select count(cid) as count from comm_list', [], 1, function (currcid, fields) {
     let newcid = parseInt(currcid[0].count);
@@ -705,16 +824,16 @@ router.post('/commaddp', function (req, res) {
 router.get('/uploadi', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../pages/upload.html'));
 });
-
+/*
 router.get('/checkimg', function (req, res, next) {
   db.query('select count(cid) as count from pic_list where cid=?', req.query.cid, 0, function (result, fields) {
     result[0].count;
   });
 });
-
+*/
 router.post('/buy', function (req, res) {
   if (req.cookies.uid === undefined) {
-    res.redirect('/login?from=/preview?cid=' + req.body.cid);
+    res.send('-1');
     return;
   }
   let pd = {
@@ -735,9 +854,87 @@ router.post('/buy', function (req, res) {
       });
     });
   });
-
-
 });
 
+/*router.get('/search', function (res, req) {
+
+});*/
+
+router.get('/search', function (req, res, next) {
+  let pd = req.query.cname;
+  console.log(pd);
+  //res.send('value');
+  let resdata = {
+    title: req.query.cname + '查询结果',
+    curcategory: req.query.cname + ' 查询结果',
+    length: 'none',
+    url1: 'none',
+    img1: 'images/noimg.png',
+    name1: 'none',
+    url2: 'none',
+    img2: 'images/noimg.png',
+    name2: 'none',
+    url3: 'none',
+    img3: 'images/noimg.png',
+    name3: 'none',
+    url4: 'none',
+    img4: 'images/noimg.png',
+    name4: 'none'
+  };
+  db.query('select cid,cname from comm_list where cname like "%' + pd + '%"', [], 3, function (results, fields) {
+    resdata.length = results.length.toString();
+    if (results.length == '0') {
+      console.log(results);
+      res.render('search', resdata);
+
+    } else {
+      db.query('select purl,cid,cname from pic_list,comm_list where cid=pcid and cname like "%' + pd + '%"', [], 0, function (purls, fields) {
+        if (purls.length == 0) {
+          console.log('purls.length = ' + purls.length);
+          console.log('results.length = ' + results.length + results[0].cid + results[0].cname);
+          switch (results.length) {
+            default:
+            case 4:
+              resdata.url4 = '/preview?cid=' + results[3].cid;
+              resdata.name4 = results[3].cname;
+            case 3:
+              resdata.url3 = '/preview?cid=' + results[2].cid;
+              resdata.name3 = results[2].cname;
+            case 2:
+              resdata.url2 = '/preview?cid=' + results[1].cid;
+              resdata.name2 = results[1].cname;
+            case 1:
+              resdata.url1 = '/preview?cid=' + results[0].cid;
+              resdata.name1 = results[0].cname;
+              break;
+          }
+          res.render('search', resdata);
+          return;
+        }
+        switch (results.length) {
+          default:
+          case 4:
+            resdata.url4 = '/preview?cid=' + purls[3].cid;
+            resdata.img4 = purls[3].purl;
+            resdata.name4 = purls[3].cname;
+          case 3:
+            resdata.url3 = '/preview?cid=' + purls[2].cid;
+            resdata.img3 = purls[2].purl;
+            resdata.name3 = purls[2].cname;
+          case 2:
+            resdata.url2 = '/preview?cid=' + purls[1].cid;
+            resdata.img2 = purls[1].purl;
+            resdata.name2 = purls[1].cname;
+          case 1:
+            resdata.url1 = '/preview?cid=' + purls[0].cid;
+            resdata.img1 = purls[0].purl;
+            resdata.name1 = purls[0].cname;
+            break;
+        }
+        res.render('search', resdata);
+      });
+    }
+  });
+});
 
 module.exports = router;

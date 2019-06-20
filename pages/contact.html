@@ -9,6 +9,8 @@
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/move-top.js"></script>
 	<script type="text/javascript" src="js/easing.js"></script>
+	<script src="./src/layui.js" charset="utf-8"></script>
+	<link href="./src/css/layui.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -75,16 +77,32 @@
 				<div class="menu">
 					<ul>
 						<li><a href="/home">主页</a></li>
+						<li><a href="/about">关于</a></li>
+						<li><a href="/delivery">快递</a></li>
 						<li class="active"><a href="/contact">联系我们</a></li>
 						<div class="clear"></div>
 					</ul>
 				</div>
-				<div class="search_box">
-					<form>
-						<input type="text" value="Search" onfocus="this.value = '';"
-							onblur="if (this.value == '') {this.value = 'Search';}"><input type="submit" value="">
-					</form>
-				</div>
+				<div class="layui-fluid">
+						<form class="layui-form" style="float:right;">
+							<div class="layui-input-inline">
+								<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
+									autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
+							</div>
+							<button class="layui-btn layui-bg-orange" lay-submit="" lay-filter="search"
+								style="margin: 4px 4px 5px 5px;">立即搜索</button>
+						</form>
+					</div>
+					<script>
+						layui.use(['form', 'jquery'], function () {
+							var form = layui.form;
+							var $ = layui.jquery;
+							form.on('submit(search)', function (data) {
+								location.href = '/search?cname=' + data.field.search;
+								return false;
+							});
+						});
+					</script>
 				<div class="clear"></div>
 			</div>
 		</div>

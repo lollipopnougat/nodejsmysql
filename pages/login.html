@@ -75,7 +75,8 @@
                     type: 'post',
                     success: function (data) {
                         if (data == '1') {
-                            location.href = "/homejs";
+                            if(location.href.split('?from=')[1]) location.href = location.href.split('?from=')[1];
+                            else location.href = "/homejs";
                         } else if(data == '2') {
                             layer.msg('验证码错误');
                         } else {

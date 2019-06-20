@@ -87,7 +87,7 @@
 					</ul>
 				</div>
 				<div class="layui-fluid">
-					<form class="layui-form">
+					<form class="layui-form" style="float:right;">
 						<div class="layui-input-inline">
 							<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
 								autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
@@ -101,17 +101,7 @@
 						var form = layui.form;
 						var $ = layui.jquery;
 						form.on('submit(search)', function (data) {
-							$.ajax({
-								url: '/search',
-								data: data.field,
-								dataType: 'text',
-								type: 'post',
-								success: function (msg) {
-									if (msg !== undefined) location.href = msg;
-									else alert('搜索错误！');
-									return false;
-								}
-							});
+							location.href = '/search?cname=' + data.field.search;
 							return false;
 						});
 					});
@@ -196,41 +186,41 @@
 						<h3>新上架</h3>
 					</div>
 					<div class="see">
-						<p><a href="#">查看所有</a></p>
+						<!-- <p><a href="#">查看所有</a></p> -->
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="section group">
 					<div class="grid_1_of_4 images_1_of_4">
-						<a href="/preview?cid=1"><img src="images/feature-pic1.jpg" alt="" /></a>
-						<h2>安卓智能云电视 </h2>
+						<a href="/preview?cid=6"><img src="images/feature-pic1.jpg" alt="" /></a>
+						<h2>Filco圣手二代 cherry键盘 </h2>
 						<div class="price-details">
 							<div class="price-number">
-								<p><span class="rupees">￥2620 </span></p>
+								<p><span class="rupees">￥1499 </span></p>
 							</div>
 							<div class="add-cart">
-								<h4><a href="/preview?cid=1">查看详情</a></h4>
+								<h4><a href="/preview?cid=6">查看详情</a></h4>
 							</div>
 							<div class="clear"></div>
 						</div>
 
 					</div>
 					<div class="grid_1_of_4 images_1_of_4">
-						<a href="/preview?cid=1"><img src="images/feature-pic2.jpg" alt="" /></a>
-						<h2>家庭影院音响组 </h2>
+						<a href="/preview?cid=5"><img src="images/feature-pic2.jpg" alt="" /></a>
+						<h2>台灯 </h2>
 						<div class="price-details">
 							<div class="price-number">
-								<p><span class="rupees">￥1099 </span></p>
+								<p><span class="rupees">￥258 </span></p>
 							</div>
 							<div class="add-cart">
-								<h4><a href="/preview?cid=1">查看详情</a></h4>
+								<h4><a href="/preview?cid=5">查看详情</a></h4>
 							</div>
 							<div class="clear"></div>
 						</div>
 
 					</div>
 					<div class="grid_1_of_4 images_1_of_4">
-						<a href="/preview?cid=1"><img src="images/feature-pic3.jpg" alt="" /></a>
+						<a href="/preview?cid=4"><img src="images/feature-pic3.jpg" alt="" /></a>
 						<h2>篮球 </h2>
 						<div class="price-details">
 							<div class="price-number">
@@ -247,7 +237,7 @@
 						<h2>格兰仕微波炉 </h2>
 						<div class="price-details">
 							<div class="price-number">
-								<p><span class="rupees">￥679 </span></p>
+								<p><span class="rupees">￥300 </span></p>
 							</div>
 							<div class="add-cart">
 								<h4><a href="/preview?cid=1">查看详情</a></h4>
@@ -280,8 +270,8 @@
 						</div>
 					</div>
 					<div class="grid_1_of_4 images_1_of_4">
-						<a href="/preview?cid=1"><img src="images/new-pic2.jpg" alt="" /></a>
-						<h2>家用环绕音响 </h2>
+						<a href="/preview?cid=5"><img src="images/new-pic2.jpg" alt="" /></a>
+						<h2>家庭影音套装</h2>
 						<div class="price-details">
 							<div class="price-number">
 								<p><span class="rupees">￥1599 </span></p>
@@ -294,7 +284,7 @@
 					</div>
 					<div class="grid_1_of_4 images_1_of_4">
 						<a href="/preview?cid=2"><img src="images/new-pic4.jpg" alt="" /></a>
-						<h2>Sony WH-1000XM3头戴式主动降噪耳机 </h2>
+						<h2>Sony WH-1000XM3主动降噪耳机 </h2>
 						<div class="price-details">
 							<div class="price-number">
 								<p><span class="rupees">￥2599 </span></p>

@@ -9,6 +9,8 @@
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/move-top.js"></script>
 	<script type="text/javascript" src="js/easing.js"></script>
+	<script src="./src/layui.js" charset="utf-8"></script>
+	<link href="./src/css/layui.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -80,12 +82,26 @@
 						<div class="clear"></div>
 					</ul>
 				</div>
-				<div class="search_box">
-					<form>
-						<input type="text" value="Search" onfocus="this.value = '';"
-							onblur="if (this.value == '') {this.value = 'Search';}"><input type="submit" value="">
-					</form>
-				</div>
+				<div class="layui-fluid">
+						<form class="layui-form" style="float:right;">
+							<div class="layui-input-inline">
+								<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
+									autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
+							</div>
+							<button class="layui-btn layui-bg-orange" lay-submit="" lay-filter="search"
+								style="margin: 4px 4px 5px 5px;">立即搜索</button>
+						</form>
+					</div>
+					<script>
+						layui.use(['form', 'jquery'], function () {
+							var form = layui.form;
+							var $ = layui.jquery;
+							form.on('submit(search)', function (data) {
+								location.href = '/search?cname=' + data.field.search;
+								return false;
+							});
+						});
+					</script>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -153,79 +169,7 @@
 						<p>2019年5月成立的全栈摸鱼开发组，是以全栈项目构建为主要开发方向的开发组.</p>
 						<p>我们的口号是全栈(Full Stack)摸鱼(Slack Off).</p>
 					</div>
-					<div class="col_1_of_3 span_1_of_3">
-						<h3>Our History</h3>
-						<div class="history-desc">
-							<div class="year">
-								<p>1998 -</p>
-							</div>
-							<p class="history">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-								laboris nisi ut aliquip ex ea commodo consequat.</p>
-							<div class="clear"></div>
-						</div>
-						<div class="history-desc">
-							<div class="year">
-								<p>2001 -</p>
-							</div>
-							<p class="history">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-								laboris.</p>
-							<div class="clear"></div>
-						</div>
-						<div class="history-desc">
-							<div class="year">
-								<p>2006 -</p>
-							</div>
-							<p class="history">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-								laboris nisi ut aliquip ex ea commodo consequat.</p>
-							<div class="clear"></div>
-						</div>
-						<div class="history-desc">
-							<div class="year">
-								<p>2010 -</p>
-							</div>
-							<p class="history">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-								laboris nisi ut aliquip ex ea commodo consequat.</p>
-							<div class="clear"></div>
-						</div>
-						<div class="history-desc">
-							<div class="year">
-								<p>2013 -</p>
-							</div>
-							<p class="history">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-								laboris.</p>
-							<div class="clear"></div>
-						</div>
-					</div>
-					<div class="col_1_of_3 span_1_of_3">
-						<h3>Opportunities</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-							ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-							fugiat nulla pariatur.</p>
-						<div class="list">
-							<ul>
-								<li><a href="#">Text of the printing</a></li>
-								<li><a href="#">Lorem Ipsum has been the standard</a></li>
-								<li><a href="#">Dummy text ever since the 1500s</a></li>
-								<li><a href="#">Unknown printer took a galley</a></li>
-								<li><a href="#">Led it to make a type specimen</a></li>
-								<li><a href="#">Not only five centuries</a></li>
-								<li><a href="#">Electronic typesetting</a></li>
-								<li><a href="#">Unchanged. It was popularised</a></li>
-								<li><a href="#">Sheets containing Lorem Ipsume</a></li>
-							</ul>
-						</div>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-							ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-							fugiat nulla pariatur.</p>
-					</div>
-				</div>
+					
 			</div>
 		</div>
 	</div>

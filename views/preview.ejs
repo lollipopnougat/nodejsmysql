@@ -12,6 +12,8 @@
   <link href="css/easy-responsive-tabs.css" rel="stylesheet" type="text/css" media="all" />
   <link rel="stylesheet" href="css/global.css">
   <script src="js/slides.min.jquery.js"></script>
+  <script src="./src/layui.js" charset="utf-8"></script>
+	<link href="./src/css/layui.css" rel="stylesheet" type="text/css" />
   <script>
     $(function () {
       $('#products').slides({
@@ -33,17 +35,25 @@
     <div class="header">
       <div class="headertop_desc">
         <div class="call">
-          <p><span>需要帮助?</span> 我们的联系方式: <span class="number">xxxxxxxxx</span></span></p>
         </div>
         <div class="account_desc">
           <ul>
-            <li><a href="/register">注册</a></li>
-            <li><a href="/login">登录</a></li>
+            <li id="register"><a href="/register">注册</a></li>
+            <li id="login"><a href="/login">登录</a></li>
             <li><a href="#">快递</a></li>
             <li><a href="#">收银台</a></li>
-            <li><a href="#">我的账户</a></li>
+            <li id="logout"><a href="/login">我的账户</a></li>
           </ul>
         </div>
+        <script>
+          let uname = '<%= uname %>';
+          let uid = '<%= uid %>';
+          if(uid != 'none') {
+            $('#register').html('<a>欢迎您</a>');
+            $('#login').html('<a><%= uname %></a>');
+            $('#logout').html('<a href="/logout">退出</a>');
+          }
+        </script>
         <div class="clear"></div>
       </div>
       <div class="header_top">
@@ -51,7 +61,7 @@
           <a href="/home"><img src="images/logo.png" alt="" /></a>
         </div>
         <div class="cart">
-          <p>欢迎来到小商品商城! <span>购物车: </span>
+          <p>欢迎来到摸鱼购物网! <span>购物车: </span>
             <div id="dd" class="wrapper-dropdown-2"> 0 件 - ￥0.00
               <ul class="dropdown">
                 <li>购物车还是空的哟</li>
@@ -98,12 +108,26 @@
             <div class="clear"></div>
           </ul>
         </div>
-        <div class="search_box">
-          <form>
-            <input type="text" value="Search" onfocus="this.value = '';"
-              onblur="if (this.value == '') {this.value = 'Search';}"><input type="submit" value="">
-          </form>
-        </div>
+        <div class="layui-fluid">
+					<form class="layui-form" style="float:right;">
+						<div class="layui-input-inline">
+							<input type="text" name="search" required="" lay-verify="required" lay-vertype="tips" placeholder="搜索商品"
+								autocomplete="off" class="layui-input" style="margin: 4px 4px 5px 5px;">
+						</div>
+						<button class="layui-btn layui-bg-orange" lay-submit="" lay-filter="search"
+							style="margin: 4px 4px 5px 5px;">立即搜索</button>
+					</form>
+				</div>
+				<script>
+					layui.use(['form', 'jquery'], function () {
+						var form = layui.form;
+						let $ = layui.jquery;
+						form.on('submit(search)', function (data) {
+              location.href = '/search?cname=' + data.field.search;
+							return false;
+						});
+					});
+				</script>
         <div class="clear"></div>
       </div>
     </div>
@@ -159,10 +183,10 @@
                 </div>
                 <div class="share-desc">
                   <div class="share">
-                    <p>分享商品 :</p>
+                    <p>商家联系方式 :</p>
                     <ul>
-                      <li><a href="#"><img src="images/facebook.png" alt="" /></a></li>
-                      <li><a href="#"><img src="images/twitter.png" alt="" /></a></li>
+                      <li><%= sphone %></li>
+
                     </ul>
                   </div>
                   <div class="button"><span><a href="javascript:void(0);" onclick="buy()">购买</a></span></div>
@@ -292,10 +316,10 @@
                 </div>
               </div>
               <div class="grid_1_of_4 images_1_of_4">
-                <a href="#"><img src="images/new-pic4.jpg" alt=""></a>
+                <a href="/preview?cid=2"><img src="images/new-pic4.jpg" alt=""></a>
                 <div class="price" style="border:none">
                   <div class="add-cart" style="float:none">
-                    <h4><a href="#">查看详情</a></h4>
+                    <h4><a href="/preview?cid=2">查看详情</a></h4>
                   </div>
                   <div class="clear"></div>
                 </div>
@@ -323,49 +347,7 @@
               <li><a href="#">鞋</a></li>
               <li><a href="#">服装</a></li>
             </ul>
-            <div class="subscribe">
-              <h2>没有账户？快速注册</h2>
-              <p>填写你的邮箱快速注册吧</p>
-              <div class="signup">
-                <form>
-                  <input type="text" value="E-mail address" onfocus="this.value = '';"
-                    onblur="if (this.value == '') {this.value = '邮箱地址';"><input type="submit" value="注册">
-                </form>
-              </div>
             </div>
-            <div class="community-poll">
-              <h2>社区反馈</h2>
-              <p>您在线购买产品的主要原因是什么?</p>
-              <div class="poll">
-                <form>
-                  <ul>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="1">
-                      <span class="label"><label>运输和交货更方便 </label></span>
-                    </li>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="2">
-                      <span class="label"><label for="vote_2">更低的价格 </label></span>
-                    </li>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="3">
-                      <span class="label"><label for="vote_3">更多的选择 </label></span>
-                    </li>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="5">
-                      <span class="label"><label for="vote_5">支付安全有保障 </label></span>
-                    </li>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="6">
-                      <span class="label"><label for="vote_6">7天退款保证 </label></span>
-                    </li>
-                    <li>
-                      <input type="radio" name="vote" class="radio" value="7">
-                      <span class="label"><label for="vote_7">其他 </label></span>
-                    </li>
-                  </ul>
-                </form>
-              </div>
             </div>
           </div>
         </div>
