@@ -1,4 +1,5 @@
 var crypto = require("crypto");
+//token模块，未使用 将来会考虑(提高登录的安全性)
 var token = {
     createToken: function (obj, timeout) {
         //console.log();

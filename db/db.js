@@ -6,7 +6,7 @@ var isSelect = /select/;
 module.exports = {
   query: function (sql, params, ident, callback) {
     let dbcon = null;
-    //每次使用的时候需要创建链接，数据操作完成之后要关闭连接
+    //判断应该使用的用户
     switch (ident) {
       case 0:
         dbcon = dbConfig.bs;
@@ -22,6 +22,7 @@ module.exports = {
         break;
     }
     console.log('dbcon = ' + dbcon.user);
+    //每次使用的时候需要创建链接，数据操作完成之后要关闭连接
     var connection = mysql.createConnection(dbcon);
     connection.connect(function (err) {
       if (err) {
@@ -48,7 +49,7 @@ module.exports = {
               //results作为数据操作后的结果，fields作为数据库连接的一些字段，大家可以打印到控制台观察一下
               //停止链接数据库，必须在查询语句后，要不然一调用这个方法，就直接停止链接，数据操作就会失败
             }
-
+            // JSON.stringify(jsonObj) -> 将json对象字符串化, JSON.parse(str) -> 将json字符串json对象化
           }
         });
       } else {
@@ -65,7 +66,7 @@ module.exports = {
       connection.end(function (err) {
         if (err) {
           console.log('关闭数据库连接失败！\n' + err.toString());
-          //throw err;
+          //throw err; 防止一出错就终止进程
         }
       });
 

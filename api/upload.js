@@ -5,12 +5,13 @@ var multer = require('multer');
 var db = require('../db/db');
 var router = express.Router();
 
+// 图片上传处理模块(不止支持图片)
 //设置文件暂存路径
 var loadfile = multer({
   dest: 'tmp/upload/'
 });
 router.post('/', loadfile.array('file', 10), function (req, res, next) {
-  //这里10表示最大支持的文件上传数目
+  //这里10表示最大支持的文件上传数目(由于多文件上传写入数据库有问题，暂时用后台页面限制只允许单文件上传)
   let pcid = req.body.pcid;
   console.log('对应商品: ' + pcid);
   // 设置响应类型及编码

@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-
+// 之前的数据库连接、查询模块，已弃用
 function connectServer() {
 
     var client=mysql.createConnection({

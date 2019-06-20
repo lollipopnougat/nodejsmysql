@@ -3,57 +3,55 @@ var express = require('express');
 var path = require('path');
 var router = express.Router();
 var db = require('../db/db'); //引入数据库封装模块
-var session = require('express-session');
-var condb = require('../db/dbConnect');
 var captcha = require('../api/captcha');
-var dbclient = condb.connect();
 var fs = require('fs');
-
 var ltn = 0;
 //var sha1 = require('js-sha1');
 //var token = require('../api/token');
 //const crypto = require('crypto');
 //const hash = crypto.createHash('sha1');
 //GET 主页
-router.get('/', function (req, res, next) {
-  res.render('index', {
+router.get('/', function (req, res, next) { //异步回调
+  res.render('index', { // 往ejs模板发数据
     title: 'Express',
     index: '主页'
   });
-
   // console.log('request ip: ' + getIp(req));
 });
 
+// req -> request, res -> response
+// 我编写的逻辑，res.send发送的1都代表成功，send其他数字都是失败
 
-router.get('/login', function (req, res, next) {
+router.get('/login', function (req, res, next) { // GET 前台登录页面 (POST 接口在 line 108)
   console.log(req.session.id);
-  if (req.cookies.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+  if (req.cookies.uid) { //(判断登陆状态，如果有效，则返回到指定页/主页，否则转到登录页面)
     //res.redirect('/test');
     console.log("用户 " + req.cookies.uid + " 已登录");
-    if (req.query.from) res.redirect(req.query.from);
+    if (req.query.from) res.redirect(req.query.from); //如果有先前页面
     else res.redirect('/homejs');
   } else res.sendfile(path.join(__dirname, '../pages/login.html'));
 });
 
-router.post('/blogin', function (req, res) {
+router.post('/blogin', function (req, res) { // 后台登录的 POST 接口 (GET在 line 358)
   console.log('id: ' + req.session.id);
-  let pd = {
+  let pd = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
     name: req.body.username,
     pass: req.body.password,
     type: req.body.type
   };
   console.log(pd);
-  if (pd.type == 'a') {
+  if (pd.type == 'a') { //登录的是管理员
     //hash.update(pd.apass);
+    //? 是mysql的匿名参数化查询,可有效防止sql注入
     db.query('select aid from admin_list where aname=? and apasswd=sha1(?)', [pd.name, pd.pass], 0, function (result, fields) {
       if (result.length == 0) {
         res.send('0');
       } else {
         req.session.aid = result[0].aid;
         req.session.aname = pd.name;
-        if (req.cookies.sid) res.clearCookie('sid');
+        if (req.cookies.sid) res.clearCookie('sid'); //如果有商家的登录信息则清除
         if (req.cookies.sname) res.clearCookie('sname');
-        res.cookie('aname', pd.name, {
+        res.cookie('aname', pd.name, { //设置cookies,只允许服务端访问
           maxAge: 1000 * 60 * 20,
           httpOnly: true
         });
@@ -64,7 +62,7 @@ router.post('/blogin', function (req, res) {
         res.send('1');
       }
     });
-  } else if (pd.type == 's') {
+  } else if (pd.type == 's') { //登录的是商家
     db.query('select sid from seller_list where sname=? and spasswd=sha1(?)', [pd.name, pd.pass], 0, function (result, fields) {
       if (result.length == 0) {
         res.send('0');
@@ -108,9 +106,9 @@ router.get('/tpch', function (req, res, next) {
 */
 
 
-router.post('/logintest', function (req, res) {
+router.post('/logintest', function (req, res) { //前台登录 POST 接口
   console.log('id: ' + req.session.id);
-  let pd = { //暂存post提交的数据 let 是ES6的语法，定义的是局部变量
+  let pd = { 
     uname: req.body.account,
     upass: req.body.password,
     captc: req.body.captcha
@@ -139,8 +137,8 @@ router.post('/logintest', function (req, res) {
 });
 
 //退出
-router.get('/logout', function (req, res, next) {
-  if (req.cookies.aid) {
+router.get('/logout', function (req, res, next) { //登出
+  if (req.cookies.aid) { //清除cookies中的登录信息
     res.clearCookie('aid');
     res.clearCookie('aname');
   }
@@ -153,19 +151,19 @@ router.get('/logout', function (req, res, next) {
     res.clearCookie('uname');
   }
 
-  //req.session.userName = null; // 删除session
-  req.session.destroy(function (err) {
+  //req.session.userName = null; 
+  req.session.destroy(function (err) { // 删除session，弃用
     if (err) {
       console.log(err);
-    } else {
+    } else { //处理之后的页面定向
       if (req.query.from || req.query.goto) res.redirect(req.query.from || req.query.goto);
-      else res.redirect('/home');
+      else res.redirect('/home'); // lhs || rhs 是js特色 如果lhs或rhs其中一个未定义，将返回另一个的值
     }
   });
   //res.redirect('/home');
 });
 
-router.post('/chuser', function (req, res) {
+router.post('/chuser', function (req, res) { //注册页检查填写的用户名是否占用
   if (req.body.user == '') {
     res.send('-1');
     return;
@@ -226,21 +224,21 @@ router.get('/contact', function (req, res, next) {
   res.sendfile(path.join(__dirname, '../pages/contact.html'));
 });
 
-router.get('/preview', function (req, res, next) {
+router.get('/preview', function (req, res, next) { // GET 前台商品页(ejs+查数据库)
   let uname = 'none';
   let uid = 'none';
-  if (req.cookies.uid) {
+  if (req.cookies.uid) { //如果登录了
     uname = req.cookies.uname;
-    uid = req.cookies.uid
+    uid = req.cookies.uid;
   }
   db.query('select * from comm_list where cid=?', req.query.cid, 0, function (judgecomm, fields) {
     if (judgecomm.length == 0) res.sendFile(path.join(__dirname, '../pages/error.html'));
     else {
       db.query('select purl from pic_list where pcid=? order by pname', req.query.cid, 0, function (picurls, fields) {
-        let p = [];
+        let p = []; 
         for (let i = 0; i < 6; i++) {
           if (picurls[i] === undefined) {
-            p.push('images/noimg.png');
+            p.push('images/noimg.png'); //如果商品图片不够，就用 '暂无图片' 替换
             continue;
           } else {
             p.push(picurls[i].purl);
@@ -274,12 +272,12 @@ router.get('/preview', function (req, res, next) {
           });
         });
       });
-    }
+    }    // 哈哈哈哈哈哈哈 回调地狱
   });
 });
 
-router.get('/homejs', function (req, res, next) {
-  if (req.cookies.uid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+router.get('/homejs', function (req, res, next) { // GET 登录后的前台
+  if (req.cookies.uid) { //判断登录状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
     let un = req.cookies.uname;
     console.log("用户 " + un + " 已登录");
@@ -289,13 +287,13 @@ router.get('/homejs', function (req, res, next) {
   } else res.redirect('/login');
 });
 
-router.get('/welcome', function (req, res, next) {
-  if (req.cookies.aid) {
+router.get('/welcome', function (req, res, next) { // GET 后台欢迎界面 回调地狱注意！！
+  if (req.cookies.aid) { // 登录的是管理员
     db.query('select count(uid) as c from user_list', [], 1, function (cuid, fields) {
       db.query('select count(cid) as c from comm_list', [], 1, function (ccid, fields) {
         db.query('select count(aid) as c from admin_list', [], 1, function (caid, fields) {
           db.query('select count(sid) as c from seller_list', [], 1, function (csid, fields) {
-            db.query('select count(pid) as c from pic_list', [], 1, function (cpid, fields) {
+            db.query('select count(pid) as c from pic_list', [], 1,  function (cpid, fields) {
               db.query('select count(oid) as c from order_list', [], 1, function (coid, fields) {
                 res.render('welcome', {
                   username: req.cookies.aname, //req.session.userName,
@@ -306,7 +304,7 @@ router.get('/welcome', function (req, res, next) {
                   onum: coid[0].c,
                   pnum: cpid[0].c,
                   todaynum: ltn,
-                  version: '1.0.31',
+                  version: '3.2.40',
                   serveroot: '127.0.0.1',
                   systeminfo: 'Windows NT 10.0',
                   envinfo: 'Windows 10 x64',
@@ -317,12 +315,12 @@ router.get('/welcome', function (req, res, next) {
                   filelimits: '2.0 MByte'
                 });
               });
-            });
+            }); // 这个回调就像火山一样 ↑
           });
         });
       });
     });
-  } else if (req.cookies.sid) {
+  } else if (req.cookies.sid) { //登录的是商家
     db.query('select count(cid) as c from comm_list where csid=?', req.cookies.sid, 2, function (ccid, fields) {
       db.query('select count(oid) as c from order_list where ocid = (select cid from comm_list where csid=?)', req.cookies.sid, 2, function (coid, fields) {
         db.query('select count(pid) as c from pic_list where pcid = (select cid from comm_list where csid=2);', req.cookies.sid, 2, function (cpid, fields) {
@@ -345,11 +343,11 @@ router.get('/welcome', function (req, res, next) {
   //} else res.redirect('/login');
 });
 
-router.get('/captcha', function (req, res, next) {
+router.get('/captcha', function (req, res, next) { // GET 验证码 (前台登录)
   captcha.getCaptcha(req, res, next);
 });
 
-router.get('/bsindex', function (req, res, next) {
+router.get('/bsindex', function (req, res, next) { // GET 后台管理主页
   if (req.cookies.aid) {
     //console.log("用户 " + req.session.userName + " 已登录");
     res.sendFile(path.join(__dirname, '../pages/bsindex.html'));
@@ -358,9 +356,9 @@ router.get('/bsindex', function (req, res, next) {
   } else res.redirect('/bslogin');
 });
 
-router.get('/bslogin', function (req, res, next) {
+router.get('/bslogin', function (req, res, next) { // GET 后台登录
   //console.log(req.session.id);
-  if (req.cookies.aid || req.cookies.sid) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+  if (req.cookies.aid || req.cookies.sid) { //判断登录状态，如果有效，则返回主页，否则转到登录页面
     //res.redirect('/test');
     console.log("用户 " + req.cookies.aid || req.cookies.sid + " 已登录");
     if (req.query.from) res.redirect(req.query.from);
@@ -368,7 +366,7 @@ router.get('/bslogin', function (req, res, next) {
   } else res.sendfile(path.join(__dirname, '../pages/bslogin.html'));
 });
 
-router.get('/piclist', function (req, res, next) {
+router.get('/piclist', function (req, res, next) { // GET 图片管理页(管理员/商家)
   if (req.cookies.aid || req.cookies.sid) res.sendFile(path.join(__dirname, '../pages/piclist.html'));
   else res.redirect('/bslogin');
 });
@@ -414,7 +412,7 @@ router.get('/orderlist', function (req, res, next) {
   else res.redirect('/logout?goto=/bslogin');
 });
 
-router.get('/memlst', function (req, res, next) {
+router.get('/memlst', function (req, res, next) { // GET 普通用户管理页(管理员only)
   if (req.cookies.aid) {
     let pag = req.query.page;
     pag -= 1;
@@ -441,7 +439,7 @@ router.get('/memlst', function (req, res, next) {
   }
 });
 
-router.get('/commlst', function (req, res, next) {
+router.get('/commlst', function (req, res, next) { // GET 商品管理页(管理员/商家)
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
@@ -483,7 +481,7 @@ router.get('/commlst', function (req, res, next) {
 
 });
 
-router.get('/ordlst', function (req, res, next) {
+router.get('/ordlst', function (req, res, next) {  // GET 订单管理页
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
@@ -522,7 +520,7 @@ router.get('/ordlst', function (req, res, next) {
   }
 });
 
-router.get('/sellst', function (req, res, next) {
+router.get('/sellst', function (req, res, next) { // GET 商家管理页
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
@@ -562,7 +560,7 @@ router.get('/sellst', function (req, res, next) {
   }
 });
 
-router.get('/piclst', function (req, res, next) {
+router.get('/piclst', function (req, res, next) { // GET 商品图片管理页
   let pag = req.query.page;
   pag -= 1;
   pag *= 10;
@@ -603,7 +601,7 @@ router.get('/piclst', function (req, res, next) {
 
 });
 
-router.post('/changemem', function (req, res) {
+router.post('/changemem', function (req, res) {  // 普通用户信息修改 POST 接口
   let pd = {
     uid: req.body.puid,
     field: req.body.pfield,
@@ -615,7 +613,7 @@ router.post('/changemem', function (req, res) {
   });
 });
 
-router.post('/changecomm', function (req, res) {
+router.post('/changecomm', function (req, res) {  // 商品信息修改 POST 接口
   let pd = {
     cid: req.body.pcid,
     field: req.body.pfield,
@@ -627,7 +625,7 @@ router.post('/changecomm', function (req, res) {
   });
 });
 
-router.post('/changesel', function (req, res) {
+router.post('/changesel', function (req, res) {  // 商家信息修改 POST 接口
   let pd = {
     sid: req.body.psid,
     field: req.body.pfield,
@@ -639,7 +637,7 @@ router.post('/changesel', function (req, res) {
   });
 });
 
-router.post('/changeord', function (req, res) {
+router.post('/changeord', function (req, res) { // 订单修改 POST 接口
   let pd = {
     oid: req.body.poid,
     field: req.body.pfield,
@@ -651,7 +649,7 @@ router.post('/changeord', function (req, res) {
   });
 });
 
-router.post('/renpic', function (req, res) {
+router.post('/renpic', function (req, res) {  // 图片重命名 POST 接口
   let pd = {
     pid: req.body.ppid,
     field: req.body.pfield,
@@ -665,6 +663,7 @@ router.post('/renpic', function (req, res) {
         if (pd.field == 'pname') {
           try {
             console.log(path.join(__dirname, '../public/uploadimg/' + pd.value).toString());
+            //fs 是node.js的标志文件操作库 带sync的是同步版(不用回调)
             fs.renameSync(path.join(__dirname, '../public/' + purl[0].purl), path.join(__dirname, '../public/uploadimg/' + pd.value));
           } catch (er) {
             console.log('重命名错误! ' + er.toString());
@@ -683,14 +682,14 @@ router.post('/renpic', function (req, res) {
 
 });
 
-router.post('/delmem', function (req, res) {
+router.post('/delmem', function (req, res) {  // 普通用户删除 POST 接口
   db.query('delete from user_list where uid=?', req.body.uid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
   });
 });
 
-router.post('/delpic', function (req, res) {
+router.post('/delpic', function (req, res) {  // 图片删除 POST 接口
   db.query('select purl from pic_list where pid=?', req.body.pid, 1, function (purl, fields) {
     try {
       fs.unlinkSync(path.join(__dirname, '../public/' + purl[0].purl));
@@ -705,28 +704,28 @@ router.post('/delpic', function (req, res) {
     });
   });
 });
-router.post('/delsel', function (req, res) {
+router.post('/delsel', function (req, res) { // 商家删除 POST 接口
   db.query('delete from seller_list where sid=?', req.body.sid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
   });
 });
 
-router.post('/delcomm', function (req, res) {
+router.post('/delcomm', function (req, res) {  // 商品删除 POST 接口
   db.query('delete from comm_list where cid=?', req.body.cid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
   });
 });
 
-router.post('/delord', function (req, res) {
+router.post('/delord', function (req, res) {  // 订单删除 POST 接口
   db.query('delete from order_list where oid=?', req.body.oid, 1, function (err, results, fields) {
     if (err) res.send('0');
     else res.send('1');
   });
 });
 
-router.get('/chmypas', function (req, res) {
+router.get('/chmypas', function (req, res) {   // GET 商家/管理员修改密码页面
   let idtype;
   if (req.cookies.aid) idtype = 'aid';
   else if (req.cookies.sid) idtype = 'sid';
@@ -737,7 +736,7 @@ router.get('/chmypas', function (req, res) {
   });
 });
 
-router.post('/changepass', function (req, res) {
+router.post('/changepass', function (req, res) { //  商家/管理员修改密码 POST 接口
   console.log(req.body.aid || req.body.sid);
   let adp = {
     id: req.body.aid || req.body.sid,
@@ -769,7 +768,7 @@ router.post('/changepass', function (req, res) {
 });
 
 
-router.post('/memadd', function (req, res) {
+router.post('/memadd', function (req, res) { // 普通用户添加 POST 接口
   let pd = {
     name: req.body.username,
     pass: req.body.pass,
@@ -785,7 +784,7 @@ router.post('/memadd', function (req, res) {
   });
 });
 
-router.post('/selladd', function (req, res) {
+router.post('/selladd', function (req, res) { // 商家添加 POST 接口
   let pd = {
     name: req.body.username,
     pass: req.body.pass,
@@ -801,7 +800,7 @@ router.post('/selladd', function (req, res) {
   });
 });
 
-router.post('/commaddp', function (req, res) {
+router.post('/commaddp', function (req, res) { // 商品添加 POST 接口
   let pd = {
     cname: req.body.cname,
     price: req.body.price,
@@ -821,7 +820,7 @@ router.post('/commaddp', function (req, res) {
 });
 
 
-router.get('/uploadi', function (req, res, next) {
+router.get('/uploadi', function (req, res, next) { // GET 图片上传页
   res.sendFile(path.join(__dirname, '../pages/upload.html'));
 });
 /*
@@ -831,8 +830,8 @@ router.get('/checkimg', function (req, res, next) {
   });
 });
 */
-router.post('/buy', function (req, res) {
-  if (req.cookies.uid === undefined) {
+router.post('/buy', function (req, res) { // 购买商品 POST 接口
+  if (req.cookies.uid === undefined) { //未登录
     res.send('-1');
     return;
   }
@@ -843,7 +842,7 @@ router.post('/buy', function (req, res) {
   };
   console.log(pd);
   db.query('select cnum from comm_list where cid = ?', pd.cid, 3, function (cnum,fields){
-    if(cnum[0].cnum < pd.num) res.send('2');
+    if(cnum[0].cnum < pd.num) res.send('2'); // 商品数量不足
   });
   db.query('select count(oid) as count from order_list', [], 3, function (curroid, fields) {
     let newoid = parseInt(curroid[0].count);
@@ -863,11 +862,11 @@ router.post('/buy', function (req, res) {
 
 });*/
 
-router.get('/search', function (req, res, next) {
-  let pd = req.query.cname;
+router.get('/search', function (req, res, next) {  // 前台商品搜索
+  let pd = req.query.cname; // 搜索的字词
   console.log(pd);
   //res.send('value');
-  let resdata = {
+  let resdata = {  //准备发到ejs的数据
     title: req.query.cname + '查询结果',
     curcategory: req.query.cname + ' 查询结果',
     length: 'none',
@@ -889,7 +888,6 @@ router.get('/search', function (req, res, next) {
     if (results.length == '0') {
       console.log(results);
       res.render('search', resdata);
-
     } else {
       db.query('select purl,cid,cname from pic_list,comm_list where cid=pcid and cname like "%' + pd + '%"', [], 0, function (purls, fields) {
         if (purls.length == 0) {
@@ -899,7 +897,7 @@ router.get('/search', function (req, res, next) {
             default:
             case 4:
               resdata.url4 = '/preview?cid=' + results[3].cid;
-              resdata.name4 = results[3].cname;
+              resdata.name4 = results[3].cname; //故意不写break，利用switch的特点减少代码
             case 3:
               resdata.url3 = '/preview?cid=' + results[2].cid;
               resdata.name3 = results[2].cname;
